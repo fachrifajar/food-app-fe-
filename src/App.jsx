@@ -1,20 +1,14 @@
 import React from "react";
-import { ThemeProvider } from "@mui/material/styles";
-import theme from "./theme.js";
-import CssBaseline from "@mui/material/CssBaseline";
 import Boxs from "./components/molecules/box-template.jsx";
+import { light } from "@mui/material/styles/createPalette.js";
 
 function App() {
-  const setTheme = theme("light");
+  document.title = "Home";
+  const [mode, setMode] = React.useState("light");
 
   return (
     <>
-      <Boxs>
-        <ThemeProvider theme={setTheme}>
-          <CssBaseline />
-          asdsa
-        </ThemeProvider>
-      </Boxs>
+      <Boxs _setTheme={mode}>asdsa</Boxs>
     </>
   );
 }

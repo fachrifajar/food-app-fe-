@@ -5,18 +5,18 @@ const theme = (mode) =>
     palette: {
       mode: mode,
       primary: {
-        main: mode === "light" ? "#EFC81A" : "#f3e5f5",
-        contrastText: mode === "light" ? "#EFC81ACC" : "#ce93d8",
+        main: mode === "light" ? "#EFC81A" : "#42a5f5",
       },
-      buttonText: {
-        main: mode === "light" ? "#fff" : "#1f1f1f",
+      secondary: {
+        main: mode === "light" ? "#EFC81ACC" : "#90caf9",
       },
       text: {
         primary: mode === "light" ? "#2e266f" : "#fff",
-        secondary: mode === "light" ? "#3f3a3a" : "rgba(255, 255, 255, 0.7)",
+        secondary: mode === "light" ? "#3f3a3a" : "#e3f2fd",
+        contrastText: mode === "light" ? "#696f79" : "#e3f2fd",
       },
       background: {
-        default: mode === "light" ? "#fff5ec" : "#1f1f1f",
+        default: mode === "light" ? "#fff5ec" : "#0A1929",
       },
     },
   });

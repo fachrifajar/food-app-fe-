@@ -1,25 +1,39 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
-import theme from "./theme.js";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ThemeProvider } from "@mui/material/styles";
+// redux
+import { BrowserRouter as Router } from "react-router-dom";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistStore } from "redux-persist";
+import store from "./store/index";
 
+// Importing Routes
+import App from "./App.jsx";
+import Register from "./pages/auth/register";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
   },
+  {
+    path: "/register",
+    element: <Register />,
+  },
 ]);
+
+const persistor = persistStore(store);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router}>
-      {/* <ThemeProvider theme={theme("light")}> */}
-        <App />
-      {/* </ThemeProvider> */}
-    </RouterProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <RouterProvider router={router}>
+          <App />
+        </RouterProvider>
+      </PersistGate>
+    </Provider>
   </React.StrictMode>
 );
