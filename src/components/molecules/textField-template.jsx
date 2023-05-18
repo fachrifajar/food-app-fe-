@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField } from "@mui/material";
+import { TextField, useMediaQuery } from "@mui/material";
 
 const TextFieldTemplate = ({
   label,
@@ -12,11 +12,12 @@ const TextFieldTemplate = ({
   InputProps,
   disabled,
 }) => {
+  const isXs = useMediaQuery("(max-width: 600px)");
   return (
     <>
       <TextField
         //   fullWidth
-        size="small"
+        size={isXs ? "medium" : "small"}
         id="outlined-basic"
         margin="normal"
         variant="outlined"
@@ -52,7 +53,7 @@ const TextFieldTemplate = ({
               borderColor: "primary",
             },
           },
-          width: { xs: "10rem", sm: "20rem", md: "25rem" },
+          width: { xs: "20rem", sm: "20rem", md: "25rem" },
         }}
       />
     </>
