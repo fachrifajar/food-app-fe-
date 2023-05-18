@@ -12,6 +12,7 @@ import store from "./store/index";
 // Importing Routes
 import App from "./App.jsx";
 import Register from "./pages/auth/register";
+import Login from "./pages/auth/login";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
   },
 ]);
 

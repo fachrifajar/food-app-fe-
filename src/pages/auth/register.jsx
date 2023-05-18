@@ -7,6 +7,7 @@ import {
   IconButton,
   Checkbox,
   FormControlLabel,
+  Alert,
 } from "@mui/material";
 
 // import icons
@@ -15,9 +16,10 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 // import components
 import Boxs from "../../components/molecules/box-template";
-import AuthLeftContent from "../../components/organisms/AuthLeftContent";
+import AuthContent from "../../components/organisms/AuthContent";
 import TextFieldTemplate from "../../components/molecules/textField-template";
 import ButtonTemplate from "../../components/molecules/button-template";
+import ModalSuccessTemplate from "../../components/molecules/modal-success-template";
 
 import axios from "axios";
 import { redirect } from "react-router-dom";
@@ -53,6 +55,10 @@ const Register = () => {
   const [isChecked, setIsChecked] = React.useState(false);
   const [isDisabled, setIsDisabled] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(false);
+
+
+  const [errMsgApi, setErrMsgApi] = React.useState(null);
+  const [isModalSuccessOpen, setIsModalSuccessOpen] = React.useState(false);
 
   // handle "password" value
   const handleClickShowPassword = () => {
@@ -128,9 +134,9 @@ const Register = () => {
   // handle "phone" value
   const handleChangePhone = (event) => {
     const newValue = event.target.value;
-    const maxLength = 14;
+    const maxLength = 12;
     if (newValue.toString().length < maxLength) {
-      setErrMsgPhone("Please input a valid phone with at least 14 digits.");
+      setErrMsgPhone("Please input a valid phone with at least 12 digits.");
       setIsErrPhone(true);
       setPhone(null);
       return;
@@ -154,10 +160,17 @@ const Register = () => {
     }
   }, [name, email, phone, password, confirmPassword, isChecked]);
 
+  // handle success modal
+  const handleSuccessModal = () => {
+    setIsModalSuccessOpen(true);
+  };
+
+  // handle register button
   const handleRegister = async () => {
     try {
       setIsLoading(true);
-      console.log(phone);
+
+      setErrMsgApi(null);
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/users/register`,
         {
@@ -168,11 +181,13 @@ const Register = () => {
         }
       );
       setIsLoading(false);
-      console.log(response);
+      handleSuccessModal()
       // redirect("/login");
     } catch (error) {
       console.log("handleRegisterUserERROR", error);
       setIsLoading(false);
+
+      setErrMsgApi(error?.response?.data?.message?.message);
     }
   };
 
@@ -201,7 +216,7 @@ const Register = () => {
 
   return (
     <>
-      <AuthLeftContent>
+      <AuthContent>
         <Boxs
           _setTheme={mode}
           _sx={{
@@ -220,6 +235,12 @@ const Register = () => {
             sx={{ fontSize: "18px", margin: "15px 0 20px 0" }}>
             Create new account to access all features
           </Typography>
+          {errMsgApi && (
+            <Alert variant="filled" severity="error">
+              {errMsgApi}
+            </Alert>
+          )}
+
           <TextFieldTemplate
             label="Name"
             placeholder="Enter your name"
@@ -316,8 +337,12 @@ const Register = () => {
             }}>
             Already have an account? <span>Log in Here</span>
           </Typography>
+          <ModalSuccessTemplate
+            open={isModalSuccessOpen}
+            // onClose={() => setIsModalSuccessOpen(false)}
+          />
         </Boxs>
-      </AuthLeftContent>
+      </AuthContent>
     </>
   );
 };

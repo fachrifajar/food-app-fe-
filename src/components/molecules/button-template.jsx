@@ -2,7 +2,15 @@ import React from "react";
 import { Button } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 
-const ButtonTemplate = ({ text, onClick, disabled, isLoading }) => {
+const ButtonTemplate = ({
+  text,
+  onClick,
+  disabled,
+  isLoading,
+  sx,
+  color,
+  endIcon,
+}) => {
   if (isLoading) {
     return (
       <LoadingButton
@@ -15,6 +23,7 @@ const ButtonTemplate = ({ text, onClick, disabled, isLoading }) => {
           borderRadius: "20px",
           marginTop: "20px",
           color: "white",
+          ...sx,
         }}>
         Loading...
       </LoadingButton>
@@ -23,14 +32,17 @@ const ButtonTemplate = ({ text, onClick, disabled, isLoading }) => {
 
   return (
     <Button
+      color={color}
       fullWidth
       variant="contained"
       disabled={disabled}
       onClick={onClick}
+      endIcon={endIcon}
       sx={{
         borderRadius: "20px",
         marginTop: "20px",
         color: "white",
+        ...sx,
       }}>
       {text}
     </Button>

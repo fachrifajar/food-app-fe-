@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid } from "@mui/material";
 
-const AuthLeftContent = ({ children }) => {
+const AuthContent = ({ children }) => {
   return (
     <div style={{ height: "100vh", overflow: "hidden" }}>
       <Grid container spacing={2} style={{ height: "100%" }}>
@@ -63,4 +63,4 @@ const AuthLeftContent = ({ children }) => {
   );
 };
 
-export default AuthLeftContent;
+export default AuthContent;
