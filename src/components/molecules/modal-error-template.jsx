@@ -1,10 +1,7 @@
 import React from "react";
 import { Modal, Card, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
-import ButtonTemplate from "../atoms/button-template";
-import { useNavigate } from "react-router-dom";
+import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 
 const MyModal = styled(Modal)({
   display: "flex",
@@ -19,27 +16,22 @@ const MyCard = styled(Card)({
   overflowY: "auto",
 });
 
-const ModalSuccessTemplate = ({ open, onClose, text, children }) => {
-  const navigate = useNavigate();
+const ModalErrorTemplate = ({ open, onClose, text, children }) => {
   return (
     <>
       <MyModal open={open} onClose={onClose}>
         <MyCard>
-          <CheckCircleOutlineIcon color="success" sx={{ fontSize: "50px" }} />
+          <ReportProblemIcon color="error" sx={{ fontSize: "50px" }} />
           <Typography
             variant="h5"
             color="text.secondary"
-            sx={{
-              fontSize: { xs: "20px", sm: "24px", md: "24px" },
-              marginTop: "20px",
-            }}>
+            sx={{ fontSize: { xs: "20px", sm: "24px", md: "24px" }, marginTop: "20px" }}>
             {text}
           </Typography>
-          {children}
         </MyCard>
       </MyModal>
     </>
   );
 };
 
-export default ModalSuccessTemplate;
+export default ModalErrorTemplate;

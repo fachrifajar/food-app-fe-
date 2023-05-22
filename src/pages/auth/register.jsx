@@ -7,26 +7,28 @@ import {
   IconButton,
   Checkbox,
   FormControlLabel,
-  Alert,
 } from "@mui/material";
 
 // import icons
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 
 // import components
-import Boxs from "../../components/molecules/box-template";
-import AuthContent from "../../components/organisms/AuthContent";
-import TextFieldTemplate from "../../components/molecules/textField-template";
-import ButtonTemplate from "../../components/molecules/button-template";
+import Boxs from "../../components/atoms/box-template";
+import AuthContent from "../../components/molecules/AuthContent";
+import TextFieldTemplate from "../../components/atoms/textField-template";
+import ButtonTemplate from "../../components/atoms/button-template";
 import ModalSuccessTemplate from "../../components/molecules/modal-success-template";
+import ModalErrorTemplate from "../../components/molecules/modal-error-template";
 
 import axios from "axios";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   document.title = "Sign Up";
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const [mode, setMode] = React.useState("light");
 
@@ -56,8 +58,8 @@ const Register = () => {
   const [isDisabled, setIsDisabled] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(false);
 
-
   const [errMsgApi, setErrMsgApi] = React.useState(null);
+  const [isModalErrOpen, setIsModalErrOpen] = React.useState(false);
   const [isModalSuccessOpen, setIsModalSuccessOpen] = React.useState(false);
 
   // handle "password" value
@@ -165,6 +167,10 @@ const Register = () => {
     setIsModalSuccessOpen(true);
   };
 
+  const handleErrModal = () => {
+    setIsModalErrOpen(true);
+  };
+
   // handle register button
   const handleRegister = async () => {
     try {
@@ -181,38 +187,16 @@ const Register = () => {
         }
       );
       setIsLoading(false);
-      handleSuccessModal()
+      handleSuccessModal();
+      setIsModalErrOpen(false);
       // redirect("/login");
     } catch (error) {
       console.log("handleRegisterUserERROR", error);
       setIsLoading(false);
-
+      handleErrModal();
       setErrMsgApi(error?.response?.data?.message?.message);
     }
   };
-
-  // React.useEffect(() => {
-  //   const getRefreshToken = async () => {
-  //     try {
-  //       const response = await fetch('https://food-app.cyclic.app/getRefreshToken', {
-  //         method: 'GET',
-  //         credentials: 'include',
-  //       });
-
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         const refreshToken = data.refreshToken;
-  //         console.log({ refreshToken });
-  //       } else {
-  //         throw new Error('Failed to retrieve refresh token');
-  //       }
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   getRefreshToken();
-  // }, []);
 
   return (
     <>
@@ -235,11 +219,6 @@ const Register = () => {
             sx={{ fontSize: "18px", margin: "15px 0 20px 0" }}>
             Create new account to access all features
           </Typography>
-          {errMsgApi && (
-            <Alert variant="filled" severity="error">
-              {errMsgApi}
-            </Alert>
-          )}
 
           <TextFieldTemplate
             label="Name"
@@ -335,11 +314,29 @@ const Register = () => {
               marginTop: "20px",
               "& span": { color: "primary.main", cursor: "pointer" },
             }}>
-            Already have an account? <span>Log in Here</span>
+            Already have an account?{" "}
+            <span onClick={() => navigate("/login")}>Log in Here</span>
           </Typography>
           <ModalSuccessTemplate
             open={isModalSuccessOpen}
             // onClose={() => setIsModalSuccessOpen(false)}
+            text="Your account has been created successfully!"
+            children={
+              <ButtonTemplate
+                text="Get Started"
+                color="success"
+                sx={{ width: "100%" }}
+                endIcon={<ArrowRightAltIcon />}
+                onClick={() => {
+                  navigate("/login");
+                }}
+              />
+            }
+          />
+          <ModalErrorTemplate
+            open={isModalErrOpen}
+            text={errMsgApi}
+            onClose={() => setIsModalErrOpen(false)}
           />
         </Boxs>
       </AuthContent>

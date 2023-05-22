@@ -50,7 +50,7 @@ const TextFieldTemplate = ({
               borderColor: "secondary",
             },
             "&.Mui-focused fieldset": {
-              borderColor: "primary",
+              borderColor: "secondary",
             },
           },
           width: { xs: "20rem", sm: "20rem", md: "25rem" },
