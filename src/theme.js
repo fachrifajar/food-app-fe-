@@ -13,7 +13,7 @@ const theme = (mode) =>
       text: {
         primary: mode === "light" ? "#2e266f" : "#fff",
         secondary: mode === "light" ? "#3f3a3a" : "#e3f2fd",
-        contrastText: mode === "light" ? "#696f79" : "#e3f2fd",
+        contrastText: mode === "light" ? "#696f79" : "#696f79",
       },
       background: {
         default: mode === "light" ? "#fff5ec" : "#0A1929",

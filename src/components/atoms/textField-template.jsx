@@ -11,6 +11,8 @@ const TextFieldTemplate = ({
   type,
   InputProps,
   disabled,
+  sx,
+  size,
 }) => {
   const isXs = useMediaQuery("(max-width: 600px)");
   return (
@@ -54,6 +56,7 @@ const TextFieldTemplate = ({
             },
           },
           width: { xs: "20rem", sm: "20rem", md: "25rem" },
+          ...sx,
         }}
       />
     </>

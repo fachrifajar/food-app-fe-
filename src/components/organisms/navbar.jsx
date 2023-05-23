@@ -110,7 +110,7 @@ function Navbar({ _setTheme, getTheme }) {
   return (
     <ThemeProvider theme={setTheme}>
       <CssBaseline />
-      <AppBar position="static" sx={{ bgcolor: "custom.default" }}>
+      <AppBar position="sticky" sx={{ bgcolor: "custom.default" }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <Typography
@@ -141,7 +141,7 @@ function Navbar({ _setTheme, getTheme }) {
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
                 onClick={handleOpenNavMenu}
-                color="inherit">
+                color="text.contrastText">
                 <MenuIcon />
               </IconButton>
               <Menu
@@ -224,6 +224,7 @@ function Navbar({ _setTheme, getTheme }) {
                       },
                       textDecoration: isActive ? "underline" : null,
                       mx: 3,
+                      fontWeight: isActive ? 1000 : null,
                     }}>
                     {page}
                   </Button>
@@ -245,7 +246,14 @@ function Navbar({ _setTheme, getTheme }) {
                   ) : (
                     <ButtonTemplate
                       text="Login"
-                      sx={{ marginTop: "0" }}
+                      sx={{
+                        marginTop: "0",
+                        bgcolor: "text.contrastText",
+                        "&:hover": {
+                          bgcolor: "text.secondary",
+                          color: mode !== "dark" ? "black" : "white",
+                        },
+                      }}
                       onClick={() => navigate("/login")}
                     />
                   )}

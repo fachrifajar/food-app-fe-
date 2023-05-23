@@ -30,7 +30,7 @@ const Register = () => {
   const theme = useTheme();
   const navigate = useNavigate();
 
-  const [mode, setMode] = React.useState("light");
+  const [mode, setMode] = React.useState(localStorage.getItem("selectedTheme"));
 
   const [name, setName] = React.useState(null);
   const [isErrName, setIsErrName] = React.useState(false);
