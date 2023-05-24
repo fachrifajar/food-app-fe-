@@ -11,7 +11,8 @@ const Boxs = ({ children, _setTheme, _sx }) => {
     <>
       <Box
         flex={1}
-        p={!isXs ? 2 : 0}
+        p={!isXs ? "0 7vw" : "0 5vw"}
+        // p={!isXs ? 2 : 0}
         sx={{
           ..._sx,
         }}>
