@@ -7,6 +7,7 @@ const MyModal = styled(Modal)({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  marginBottom: "50vh"
 });
 
 const MyCard = styled(Card)({
@@ -16,7 +17,7 @@ const MyCard = styled(Card)({
   overflowY: "auto",
 });
 
-const ModalErrorTemplate = ({ open, onClose, text, children }) => {
+const ModalErrorTemplate = ({ open, onClose, text, children, _sx }) => {
   return (
     <>
       <MyModal open={open} onClose={onClose}>
@@ -25,7 +26,10 @@ const ModalErrorTemplate = ({ open, onClose, text, children }) => {
           <Typography
             variant="h5"
             color="text.secondary"
-            sx={{ fontSize: { xs: "20px", sm: "24px", md: "24px" }, marginTop: "20px" }}>
+            sx={{
+              fontSize: { xs: "20px", sm: "24px", md: "24px" },
+              marginTop: "20px",
+            }}>
             {text}
           </Typography>
         </MyCard>

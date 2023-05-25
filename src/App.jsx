@@ -15,27 +15,35 @@ import Boxs from "./components/atoms/box-template";
 import TextFieldTemplate from "./components/atoms/textField-template";
 import CardTemplate from "./components/molecules/card-template";
 import ButtonTemplate from "./components/atoms/button-template";
+import SortButton from "./components/molecules/sort-button";
+import PaginationTemplate from "./components/molecules/pagination-template";
 
 //importing icons
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 
 function App() {
   document.title = "Home";
-  const isSxs = useMediaQuery("(min-width: 1px) and (max-width: 599px)");
+
   const isXs = useMediaQuery("(max-width: 600px)");
   const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
 
   const [mode, setMode] = React.useState(localStorage.getItem("selectedTheme"));
   const [newRecipes, setNewRecipes] = React.useState([]);
+  const [popRecipes, setPoprecipes] = React.useState([]);
+  const [totalPages, setTotalPages] = React.useState(1);
+  const [currentPages, setCurrentPages] = React.useState(1);
+  const [getSortType, setGetSortType] = React.useState(2);
 
   const fetchContent = async () => {
     try {
-      const getNewRecipes = await axios.get(
+      const getRecipes = await axios.get(
         `${
           import.meta.env.VITE_BASE_URL
-        }/users/recipes/search/?page=1&limit=1&sort=true&sortType=2`
+        }/users/recipes/search/?page=1&limit=6&sort=true&sortType=2`
       );
-      setNewRecipes(getNewRecipes?.data?.data?.[0]);
+      setNewRecipes(getRecipes?.data?.data?.[0]);
+      setPoprecipes(getRecipes?.data?.data);
+      setTotalPages(Math.ceil(getRecipes?.data?.total / 6));
     } catch (error) {
       console.log(error, "ERRORfetchContent");
     }
@@ -43,6 +51,7 @@ function App() {
 
   React.useEffect(() => {
     fetchContent();
+    // console.log(popRecipes);
   }, []);
 
   return (
@@ -53,7 +62,7 @@ function App() {
         className="topContent-container"
         _setTheme={mode}
         _sx={{
-          height: { md: "120vh", sm: "100vh", xs: "70vh" },
+          height: { md: "120vh", sm: "100vh", xs: "65vh" },
           // padding: 0,
         }}>
         <Grid container spacing={2}>
@@ -116,7 +125,7 @@ function App() {
           <Box
             className="topContent-right-background"
             sx={{
-              height: { md: "120vh", sm: "100vh", xs: "70vh" },
+              height: { md: "120vh", sm: "100vh", xs: "60vh" },
               width: { md: "20vw", sm: "25vw", xs: "15vw" },
               position: "absolute",
               backgroundColor: "primary.main",
@@ -134,7 +143,7 @@ function App() {
         className="middleContent-container"
         _setTheme={mode}
         _sx={{
-          height: "100vh",
+          height: { md: "100vh", sm: "100vh", xs: "90vh" },
         }}>
         {/* TITLE CONTAINER */}
         <div
@@ -179,7 +188,13 @@ function App() {
           }}
         />
 
-        <Grid container spacing={2}>
+        <Grid
+          container
+          spacing={2}
+          // direction={isXs ? "column" : "row"}
+          // justifyContent="center"
+          // alignItems="center"
+        >
           <Grid
             item
             md={7}
@@ -190,7 +205,7 @@ function App() {
               "& img": {
                 width: isXs ? "65vw" : isSm ? "45vw" : "42vw",
                 marginTop: isXs ? "5vh" : "8vh",
-                position: "absolute",
+                position: "relative",
                 borderRadius: "10px",
               },
             }}>
@@ -206,7 +221,7 @@ function App() {
             sm={5}
             xs={12}
             sx={{
-              marginTop: { md: "25vh", sm: "25vh", xs: "45vh" },
+              marginTop: { md: "25vh", sm: "25vh", xs: "0vh" },
               "& .MuiTypography-root": {
                 color: "text.secondary",
               },
@@ -216,6 +231,7 @@ function App() {
                 color: "text.secondary",
                 marginTop: "2%",
               },
+              position: "relative",
             }}>
             <Typography
               className="middleContent-recipe-title"
@@ -231,10 +247,11 @@ function App() {
               component="p"
               variant="subtitle1"
               sx={{
-                fontSize: { md: "26px", sm: "22px", xs: "18px" },
+                fontSize: { md: "16px", sm: "16px", xs: "14px" },
                 fontWeight: 400,
+                fontStyle: "italic",
               }}>
-              (Quick & Easy)
+              *By {newRecipes?.username}
             </Typography>
             <div />
             <Typography
@@ -257,6 +274,85 @@ function App() {
             />
           </Grid>
         </Grid>
+      </Boxs>
+
+      {/* END OF MIDDLE CONTENT */}
+
+      {/* BOTTOM CONTENT */}
+      <Boxs
+        className="bottomContent-container"
+        _setTheme={mode}
+        _sx={{
+          height: "100vh",
+          marginTop: { md: "10vh", sm: "10vh", xs: "0vh" },
+        }}>
+        {/* TITLE CONTAINER */}
+        <div
+          className="middleContent-titleContainer"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "50px",
+          }}>
+          {/* TITLE BGCOLOR */}
+          <Box
+            className="middleContent-title-bgColor"
+            sx={{
+              bgcolor: "primary.main",
+              height: !isXs ? "80px" : "60px",
+              width: !isXs ? "15px" : "10px",
+            }}
+          />
+          {/* TITLE  */}
+          <Typography
+            className="middleContent-title"
+            color="text.secondary"
+            sx={{
+              marginLeft: !isXs ? "30px" : "20px",
+              fontSize: { xs: "28px", sm: "30px", md: "40px" },
+              fontWeight: 500,
+            }}>
+            Popular Recipe
+          </Typography>
+        </div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <SortButton
+            getSortType={(e) => setGetSortType(e)}
+            getSortData={(e) => {
+              setPoprecipes(e);
+            }}
+          />
+        </div>
+        <br />
+        <Grid
+          container
+          spacing={2}
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+          // sx={{display: "flex", justifyContent: "center"}}
+        >
+          {popRecipes.map((item, key) => (
+            <React.Fragment key={key}>
+              <Grid item md={4} sm={4} xs={6}>
+                <CardTemplate
+                  image={`${import.meta.env.VITE_CLOUDINARY_URL}${item?.photo}`}
+                  title={item?.title}
+                />
+              </Grid>
+            </React.Fragment>
+          ))}
+        </Grid>
+        <br />
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <PaginationTemplate
+            count={totalPages}
+            pages={(e) => setCurrentPages(e)}
+            fetchedData={(e) => setPoprecipes(e)}
+            sortType={getSortType}
+          />
+        </div>
+        <br />
       </Boxs>
     </>
   );

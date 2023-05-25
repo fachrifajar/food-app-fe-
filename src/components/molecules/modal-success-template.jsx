@@ -10,6 +10,7 @@ const MyModal = styled(Modal)({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  marginBottom: "50vh"
 });
 
 const MyCard = styled(Card)({

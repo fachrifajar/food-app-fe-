@@ -241,10 +241,6 @@ function Navbar({ _setTheme, getTheme }) {
                 letterSpacing: ".3rem",
                 textDecoration: "none",
                 color: "text.primary",
-                // "&:hover": {
-                //   color: "primary.main",
-                //   transition: "all 0.5s ease",
-                // },
               }}>
               Food
               <span
