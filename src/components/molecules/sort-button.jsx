@@ -6,7 +6,7 @@ import Select from "@mui/material/Select";
 import axios from "axios";
 
 const SortButton = ({ getSortType, getSortData }) => {
-  const [sortType, setSortType] = React.useState("newest");
+  const [sortType, setSortType] = React.useState("2");
 
   const handleChange = async (event) => {
     const selectedSort = event.target.value;
@@ -35,13 +35,18 @@ const SortButton = ({ getSortType, getSortData }) => {
         id="demo-select-small"
         value={sortType}
         label="Age"
-        onChange={handleChange}>
+        onChange={handleChange}
+        defaultValue="2">
         <MenuItem value="" disabled>
           <em>None</em>
         </MenuItem>
-        <MenuItem value="1">A-Z</MenuItem>
+        <MenuItem value="1" disabled={sortType === "1"}>
+          A-Z
+        </MenuItem>
         {/* <MenuItem value="z-a">Z-A</MenuItem> */}
-        <MenuItem value="2">Newest</MenuItem>
+        <MenuItem value="2" disabled={sortType === "2"}>
+          Newest
+        </MenuItem>
         {/* <MenuItem value="oldest">Oldest</MenuItem> */}
       </Select>
     </FormControl>
