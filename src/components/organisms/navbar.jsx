@@ -126,12 +126,21 @@ function Navbar({ _setTheme, getTheme }) {
                 letterSpacing: ".3rem",
                 textDecoration: "none",
                 color: "text.primary",
-                "&:hover": {
-                  color: "primary.main",
-                  transition: "all 0.5s ease",
-                },
+                // "&:hover": {
+                //   color: "primary.main",
+                //   transition: "all 0.5s ease",
+                // },
               }}>
-              FOODHUB
+              Food
+              <span
+                style={{
+                  color: "white",
+                  backgroundColor: "#ff9000",
+                  borderRadius: "5px",
+                  paddingLeft: "5px",
+                }}>
+                Hub
+              </span>
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -183,12 +192,21 @@ function Navbar({ _setTheme, getTheme }) {
                 letterSpacing: ".3rem",
                 textDecoration: "none",
                 color: "text.primary",
-                "&:hover": {
-                  color: "primary.main",
-                  transition: "all 0.5s ease",
-                },
+                // "&:hover": {
+                //   color: "primary.main",
+                //   transition: "all 0.5s ease",
+                // },
               }}>
-              FOODHUB
+              Food
+              <span
+                style={{
+                  color: "white",
+                  backgroundColor: "#ff9000",
+                  borderRadius: "5px",
+                  paddingLeft: "5px",
+                }}>
+                Hub
+              </span>
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
