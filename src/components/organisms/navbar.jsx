@@ -19,9 +19,11 @@ import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ButtonTemplate from "../atoms/button-template";
 import { useNavigate } from "react-router-dom";
+import * as authReducer from "../../store/reducer/auth";
+import ModalErrorTemplate from "../molecules/modal-error-template";
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   width: 62,
@@ -71,13 +73,14 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 }));
 
 const pages = ["Home", "Add Recipe", "Profile"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const settings = ["Logout"];
 
 function Navbar({ _setTheme, getTheme }) {
   const setTheme = theme(_setTheme);
   const isXs = useMediaQuery("(max-width: 900px)");
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -85,6 +88,7 @@ function Navbar({ _setTheme, getTheme }) {
     useSelector((state) => state.auth?.profile?.data)
   );
   const [mode, setMode] = React.useState("dark");
+  const [isModalErrOpen, setIsModalErrOpen] = React.useState(false);
 
   const handleSwitchChange = () => {
     setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
@@ -105,6 +109,10 @@ function Navbar({ _setTheme, getTheme }) {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleErrModal = () => {
+    setIsModalErrOpen(true);
   };
 
   return (
@@ -170,11 +178,52 @@ function Navbar({ _setTheme, getTheme }) {
                 sx={{
                   display: { xs: "block", md: "none" },
                 }}>
-                {pages.map((page) => (
-                  <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">{page}</Typography>
-                  </MenuItem>
-                ))}
+                <MenuItem
+                  onClick={() => {
+                    if (location.pathname === "/") {
+                      window.location.reload();
+                    } else {
+                      navigate("/");
+                    }
+                    handleCloseNavMenu();
+                  }}>
+                  <Typography textAlign="center">Home</Typography>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    if (!authData) {
+                      handleErrModal();
+                    } else {
+                      if (location.pathname === "/add-recipe") {
+                        window.location.reload();
+                      } else {
+                        navigate("/add-recipe");
+                      }
+                    }
+                    handleCloseNavMenu();
+                  }}>
+                  <Typography textAlign="center">Add Recipe</Typography>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    if (!authData) {
+                      handleErrModal();
+                    } else {
+                      if (location.pathname === "/profile") {
+                        window.location.reload();
+                      } else {
+                        navigate("/profile");
+                      }
+                    }
+                    handleCloseNavMenu();
+                  }}>
+                  <Typography textAlign="center">Profile</Typography>
+                </MenuItem>
+                <MenuItem>
+                  <Typography textAlign="center">
+                    <MaterialUISwitch onChange={handleSwitchChange} />
+                  </Typography>
+                </MenuItem>
               </Menu>
             </Box>
 
@@ -230,7 +279,33 @@ function Navbar({ _setTheme, getTheme }) {
                 return (
                   <Button
                     key={page}
-                    onClick={handleCloseNavMenu}
+                    onClick={() => {
+                      if (!authData && page !== "Home") {
+                        handleErrModal();
+                      } else {
+                        if (page === "Home") {
+                          if (location.pathname === "/") {
+                            window.location.reload();
+                          } else {
+                            navigate("/");
+                          }
+                        } else if (page === "Add Recipe") {
+                          if (location.pathname === "/add-recipe") {
+                            window.location.reload();
+                          } else {
+                            navigate("/add-recipe");
+                          }
+                        } else if (page === "Profile") {
+                          if (location.pathname === "/profile") {
+                            window.location.reload();
+                          } else {
+                            navigate("/profile");
+                          }
+                        }
+                      }
+
+                      handleCloseNavMenu();
+                    }}
                     sx={{
                       my: 2,
                       color: isActive ? "text.secondary" : "text.primary",
@@ -251,10 +326,13 @@ function Navbar({ _setTheme, getTheme }) {
             </Box>
 
             <Box sx={{ flexGrow: 0 }}>
-              <FormControlLabel
-                control={<MaterialUISwitch />}
-                onChange={handleSwitchChange}
-              />
+              {!isXs && (
+                <FormControlLabel
+                  control={<MaterialUISwitch />}
+                  onChange={handleSwitchChange}
+                />
+              )}
+
               <Tooltip title={!authData ? null : "Open settings"}>
                 <IconButton
                   onClick={authData ? handleOpenUserMenu : null}
@@ -271,6 +349,8 @@ function Navbar({ _setTheme, getTheme }) {
                           bgcolor: "text.secondary",
                           color: mode !== "dark" ? "black" : "white",
                         },
+                        width: { md: "3rem", sm: "3rem", xs: "1rem" },
+                        fontSize: { md: "14px", sm: "14px", xs: "13px" },
                       }}
                       onClick={() => navigate("/login")}
                     />
@@ -294,12 +374,24 @@ function Navbar({ _setTheme, getTheme }) {
                 onClose={handleCloseUserMenu}>
                 {settings.map((setting) => (
                   <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">{setting}</Typography>
+                    <Typography
+                      textAlign="center"
+                      onClick={() => {
+                        dispatch(authReducer.deleteAuthData());
+                        window.location.reload();
+                      }}>
+                      {setting}
+                    </Typography>
                   </MenuItem>
                 ))}
               </Menu>
             </Box>
           </Toolbar>
+          <ModalErrorTemplate
+            open={isModalErrOpen}
+            text="Please Login first before accessing this page"
+            onClose={() => setIsModalErrOpen(false)}
+          />
         </Container>
       </AppBar>
     </ThemeProvider>

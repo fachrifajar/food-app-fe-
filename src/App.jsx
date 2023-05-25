@@ -21,6 +21,7 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 
 function App() {
   document.title = "Home";
+  const isSxs = useMediaQuery("(min-width: 1px) and (max-width: 599px)");
   const isXs = useMediaQuery("(max-width: 600px)");
   const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
 
@@ -63,7 +64,7 @@ function App() {
             sm={5}
             md={3.5}
             sx={{
-              marginTop: { md: "30vh", sm: "20vh", xs: "20vh" },
+              marginTop: { md: "30vh", sm: "20vh", xs: "10vh" },
               // marginLeft: "10vw",
             }}>
             <Typography
@@ -111,7 +112,7 @@ function App() {
               />
             </Grid>
           )}
-          {/* RIGHT YELLOW BACKGROUND */}
+          {/* RIGHT BACKGROUND */}
           <Box
             className="topContent-right-background"
             sx={{
@@ -170,7 +171,7 @@ function App() {
           className="middleContent-bgcolor"
           sx={{
             bgcolor: "primary.main",
-            height: { md: "68vh", sm: "40vh", xs: "35vh" },
+            height: { md: "68vh", sm: "40vh", xs: "23vh" },
             width: { md: "27vw", sm: "40vw", xs: "60vw" },
             position: "absolute",
             left: 0,

@@ -38,6 +38,9 @@ const Login = () => {
   const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
 
   const [mode, setMode] = React.useState(localStorage.getItem("selectedTheme"));
+  const [authData, setAuthData] = React.useState(
+    useSelector((state) => state.auth?.profile?.data)
+  );
 
   const [email, setEmail] = React.useState(null);
   const [isErrEmail, setIsErrEmail] = React.useState(false);
@@ -92,6 +95,10 @@ const Login = () => {
 
   // handle disable button when params "incomplete"
   React.useEffect(() => {
+    if (authData) {
+      navigate("/");
+    }
+
     if (email && password) {
       setIsDisabled(false);
     } else {

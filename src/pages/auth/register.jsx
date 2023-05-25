@@ -24,6 +24,7 @@ import ModalErrorTemplate from "../../components/molecules/modal-error-template"
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Register = () => {
   document.title = "Sign Up";
@@ -31,6 +32,9 @@ const Register = () => {
   const navigate = useNavigate();
 
   const [mode, setMode] = React.useState(localStorage.getItem("selectedTheme"));
+  const [authData, setAuthData] = React.useState(
+    useSelector((state) => state.auth?.profile?.data)
+  );
 
   const [name, setName] = React.useState(null);
   const [isErrName, setIsErrName] = React.useState(false);
@@ -155,6 +159,10 @@ const Register = () => {
 
   // handle disable button when params "incomplete"
   React.useEffect(() => {
+    if (authData) {
+      navigate("/");
+    }
+
     if (name && email && phone && password && confirmPassword && isChecked) {
       setIsDisabled(false);
     } else {
