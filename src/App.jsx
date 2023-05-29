@@ -1,6 +1,8 @@
 import React from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import * as recipeReducer from "./store/reducer/recipe";
 
 import {
   Typography,
@@ -22,11 +24,11 @@ import SearchResultTemplate from "./components/molecules/search-result-template"
 
 //importing icons
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import ClearIcon from "@mui/icons-material/Clear";
 
 function App() {
   document.title = "Home";
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const isXs = useMediaQuery("(max-width: 600px)");
   const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
@@ -70,7 +72,11 @@ function App() {
   const handleSuggestionSelect = (event) => {
     const getClickedData = suggestions.filter((item) => item.slug === event);
 
-    console.log(getClickedData);
+    dispatch(
+      recipeReducer.setSearchRecipe({
+        data: getClickedData,
+      })
+    );
   };
 
   const fetchContent = async () => {
@@ -88,15 +94,16 @@ function App() {
     }
   };
 
-  const fetchClickCard = async (slug) => {
-    try {
-      const getRecipes = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/users/recipes/search/${slug}`
-      );
-      console.log(getRecipes?.data?.data?.[0]);
-    } catch (error) {
-      console.log(error, "errorFetchClickCard");
-    }
+  const fetchClickCard = (slug) => {
+    const getClickedDataCard = popRecipes.filter((item) => item.slug === slug);
+
+    dispatch(
+      recipeReducer.setRecipe({
+        data: getClickedDataCard,
+      })
+    );
+
+    navigate(`/detail-recipe/${getClickedDataCard?.[0]?.slug}`);
   };
 
   React.useEffect(() => {
@@ -135,6 +142,7 @@ function App() {
             </Typography>
 
             <TextFieldTemplate
+   
               className="topContent-search-field"
               placeholder="Search Recipe..."
               sx={{
@@ -154,7 +162,12 @@ function App() {
                 if (e.key === "Enter") {
                   e.preventDefault();
                   setInputValue(e.target.value);
-                  console.log(e.target.value)
+                  dispatch(
+                    recipeReducer.setSearchRecipe({
+                      data: suggestions,
+                    })
+                  );
+                  navigate("/search");
                 }
               }}
             />

@@ -14,6 +14,8 @@ import App from "./App.jsx";
 import Register from "./pages/auth/register";
 import Login from "./pages/auth/login";
 import Profile from "./pages/profile";
+import Search from "./pages/search";
+import DetailRecipe from "./pages/detail-recipe";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +33,14 @@ const router = createBrowserRouter([
   {
     path: "/profile",
     element: <Profile />,
+  },
+  {
+    path: "/search",
+    element: <Search />,
+  },
+  {
+    path: "/detail-recipe/:title",
+    element: <DetailRecipe />,
   },
 ]);
 

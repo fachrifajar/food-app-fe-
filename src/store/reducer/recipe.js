@@ -12,11 +12,11 @@ export const recipeSlice = createSlice({
     setRecipe(state, action) {
       state.recipeData = action.payload;
     },
-    searchRecipe(state, action) {
+    setSearchRecipe(state, action) {
       state.searchRecipeData = action.payload;
     },
   },
 });
 
-export const { setRecipe, searchRecipe } = recipeSlice.actions;
+export const { setRecipe, setSearchRecipe } = recipeSlice.actions;
 export default recipeSlice.reducer;
