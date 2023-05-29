@@ -5,7 +5,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { CardActionArea } from "@mui/material";
 
-export default function CardTemplate({ image,title }) {
+export default function CardTemplate({ image,title, onClick }) {
   return (
     <Card
       sx={
@@ -16,7 +16,7 @@ export default function CardTemplate({ image,title }) {
           //  position: "absolute"
         }
       }>
-      <CardActionArea>
+      <CardActionArea onClick={onClick}>
         <CardMedia
           component="img"
           height="400"

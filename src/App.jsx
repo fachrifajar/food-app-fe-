@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 import {
   Typography,
@@ -17,22 +18,60 @@ import CardTemplate from "./components/molecules/card-template";
 import ButtonTemplate from "./components/atoms/button-template";
 import SortButton from "./components/molecules/sort-button";
 import PaginationTemplate from "./components/molecules/pagination-template";
+import SearchResultTemplate from "./components/molecules/search-result-template";
 
 //importing icons
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import ClearIcon from "@mui/icons-material/Clear";
 
 function App() {
   document.title = "Home";
+  const navigate = useNavigate();
 
   const isXs = useMediaQuery("(max-width: 600px)");
   const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
 
   const [mode, setMode] = React.useState(localStorage.getItem("selectedTheme"));
+  const [inputValue, setInputValue] = React.useState("");
+  const [suggestions, setSuggestions] = React.useState([]);
+
   const [newRecipes, setNewRecipes] = React.useState([]);
   const [popRecipes, setPoprecipes] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(1);
   const [currentPages, setCurrentPages] = React.useState(1);
   const [getSortType, setGetSortType] = React.useState(2);
+
+  const fetchSuggestions = async (value) => {
+    try {
+      if (value && value.length !== 0) {
+        const convertedText = value.replace(/\s/g, "-");
+        const getRecipes = await axios.get(
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/users/recipes/search/${convertedText}`
+        );
+        setSuggestions(getRecipes?.data?.data);
+      }
+    } catch (error) {
+      console.log("errorFetchSuggestions", error);
+    }
+  };
+
+  const handleInputChange = (event) => {
+    const getValue = event.target.value;
+
+    setInputValue(getValue);
+
+    if (getValue.length !== 0 || inputValue.length !== 0) {
+      fetchSuggestions(getValue);
+    }
+  };
+
+  const handleSuggestionSelect = (event) => {
+    const getClickedData = suggestions.filter((item) => item.slug === event);
+
+    console.log(getClickedData);
+  };
 
   const fetchContent = async () => {
     try {
@@ -49,9 +88,20 @@ function App() {
     }
   };
 
+  const fetchClickCard = async (slug) => {
+    try {
+      const getRecipes = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/users/recipes/search/${slug}`
+      );
+      console.log(getRecipes?.data?.data?.[0]);
+    } catch (error) {
+      console.log(error, "errorFetchClickCard");
+    }
+  };
+
   React.useEffect(() => {
     fetchContent();
-    // console.log(popRecipes);
+    // console.log(newRecipes);
   }, []);
 
   return (
@@ -83,6 +133,7 @@ function App() {
               sx={{ fontSize: { xs: "40px", sm: "40px", md: "50px" } }}>
               Discover Recipe & Delicious Food
             </Typography>
+
             <TextFieldTemplate
               className="topContent-search-field"
               placeholder="Search Recipe..."
@@ -96,7 +147,23 @@ function App() {
                     <SearchRoundedIcon />
                   </InputAdornment>
                 ),
-              }}></TextFieldTemplate>
+              }}
+              onChange={handleInputChange}
+              value={inputValue}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  setInputValue(e.target.value);
+                  console.log(e.target.value)
+                }
+              }}
+            />
+            {inputValue?.length > 0 && (
+              <SearchResultTemplate
+                result={suggestions}
+                onClick={(e) => handleSuggestionSelect(e)}
+              />
+            )}
           </Grid>
           {!isXs && (
             <Grid
@@ -338,6 +405,7 @@ function App() {
                 <CardTemplate
                   image={`${import.meta.env.VITE_CLOUDINARY_URL}${item?.photo}`}
                   title={item?.title}
+                  onClick={() => fetchClickCard(item?.slug)}
                 />
               </Grid>
             </React.Fragment>

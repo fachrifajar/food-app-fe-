@@ -107,6 +107,44 @@
 
 
 
-console.log(new Date().getTime())
+// console.log(new Date().getTime())
 
 // height: !isXs ? (isSm ? "49vw" : "49vw") : "68vh",
+
+// import crypto from 'crypto-browserify';
+
+// // Encryption function
+// function encrypt(text, key) {
+//   const cipher = crypto.createCipher('aes-256-cbc', key);
+//   let encrypted = cipher.update(text, 'utf8', 'hex');
+//   encrypted += cipher.final('hex');
+//   return encrypted;
+// }
+
+// // Decryption function
+// function decrypt(encryptedText, key) {
+//   const decipher = crypto.createDecipher('aes-256-cbc', key);
+//   let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+//   decrypted += decipher.final('utf8');
+//   return decrypted;
+// }
+
+// // Example usage
+// const title = 'salted-brown-butter-pancake';
+// const encryptionKey = 'my-secret-key';
+
+// const encryptedSlug = encrypt(title, encryptionKey);
+// console.log('Encrypted Slug:', encryptedSlug);
+
+// const decryptedSlug = decrypt(encryptedSlug, encryptionKey);
+// console.log('Decrypted Slug:', decryptedSlug);
+
+
+
+
+
+
+
+
+
+
