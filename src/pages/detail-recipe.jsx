@@ -31,6 +31,9 @@ const DetailRecipe = () => {
   const [mode, setMode] = React.useState(localStorage.getItem("selectedTheme"));
   const [isModalErrOpen, setIsModalErrOpen] = React.useState(false);
 
+  const [isModalSuccessOpen, setIsModalSuccessOpen] = React.useState(false);
+  const [successMsg, setSuccessMsg] = React.useState("");
+
   const [getComments, setGetComments] = React.useState([]);
   const [getCommentValue, setGetCommentValue] = React.useState("");
   const [isError, setIsError] = React.useState(false);
@@ -75,6 +78,9 @@ const DetailRecipe = () => {
       console.log(response);
       fetchComment();
       setIsLoading(false);
+
+      setSuccessMsg("Comment successfully added");
+      handleSuccessModal();
     } catch (error) {
       if (error?.response?.status === 401) {
         handleRefreshToken();
@@ -110,8 +116,10 @@ const DetailRecipe = () => {
       );
       console.log(response);
       fetchComment();
-
       setIsLoading(false);
+
+      setSuccessMsg("Comment successfully added");
+      handleSuccessModal();
     } catch (error) {
       console.log("ERRORgetRefreshToken", error);
       setIsLoading(false);
@@ -120,6 +128,10 @@ const DetailRecipe = () => {
 
   const handleErrModal = () => {
     setIsModalErrOpen(true);
+  };
+
+  const handleSuccessModal = () => {
+    setIsModalSuccessOpen(true);
   };
 
   React.useEffect(() => {
@@ -289,11 +301,15 @@ const DetailRecipe = () => {
           _onSuccess={(e) => {
             if (e === true) {
               fetchComment();
+              setSuccessMsg("Comment successfully edited");
+              handleSuccessModal();
             }
           }}
           _onSuccessDelete={(e) => {
             if (e === true) {
               fetchComment();
+              setSuccessMsg("Comment successfully deleted");
+              handleSuccessModal();
             }
           }}
         />
@@ -301,6 +317,11 @@ const DetailRecipe = () => {
           open={isModalErrOpen}
           text="Please Login first before accessing this page"
           onClose={() => setIsModalErrOpen(false)}
+        />
+        <ModalSuccessTemplate
+          open={isModalSuccessOpen}
+          onClose={() => setIsModalSuccessOpen(false)}
+          text={successMsg}
         />
       </Boxs>
     </>

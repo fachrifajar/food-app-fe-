@@ -10,12 +10,16 @@ const MyModal = styled(Modal)({
   marginBottom: "50vh"
 });
 
-const MyCard = styled(Card)({
+const MyCard = styled(Card)(({ theme }) => ({
   textAlign: "center",
   borderRadius: "20px",
   padding: "30px 50px",
   overflowY: "auto",
-});
+  width: "80vw",
+  [theme.breakpoints.up("md")]: {
+    width: "40vw",
+  },
+}));
 
 const ModalErrorTemplate = ({ open, onClose, text, children, _sx }) => {
   return (
