@@ -10,6 +10,8 @@ import Boxs from "../components/atoms/box-template";
 import MultilineTemplate from "../components/atoms/multiline-template";
 import CardCommentTemplate from "../components/molecules/card-comment-template";
 import ButtonTemplate from "../components/atoms/button-template";
+import ModalErrorTemplate from "../components/molecules/modal-error-template";
+import ModalSuccessTemplate from "../components/molecules/modal-success-template";
 
 // import icons
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -27,6 +29,7 @@ const DetailRecipe = () => {
   const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
 
   const [mode, setMode] = React.useState(localStorage.getItem("selectedTheme"));
+  const [isModalErrOpen, setIsModalErrOpen] = React.useState(false);
 
   const [getComments, setGetComments] = React.useState([]);
   const [getCommentValue, setGetCommentValue] = React.useState("");
@@ -70,7 +73,7 @@ const DetailRecipe = () => {
         }
       );
       console.log(response);
-
+      fetchComment();
       setIsLoading(false);
     } catch (error) {
       if (error?.response?.status === 401) {
@@ -115,6 +118,10 @@ const DetailRecipe = () => {
     }
   };
 
+  const handleErrModal = () => {
+    setIsModalErrOpen(true);
+  };
+
   React.useEffect(() => {
     fetchComment();
   }, []);
@@ -134,7 +141,7 @@ const DetailRecipe = () => {
         _setTheme={mode}
         _sx={{
           marginTop: { md: "15vh", sm: "15vh", xs: "10vh" },
-          height: "300vh",
+          // height: "300vh",
         }}>
         <div
           style={{
@@ -215,12 +222,21 @@ const DetailRecipe = () => {
           <MultilineTemplate
             label="Comments : "
             onChange={(e) => {
-              if (e.target.value.length < 5) {
-                setIsError(true);
+              if (e.target.value === "") {
+                setIsError(false);
                 setGetCommentValue("");
               } else {
-                setIsError(false);
-                setGetCommentValue(e.target.value);
+                if (e.target.value.length < 5) {
+                  if (e.target.value.length === 0) {
+                    setIsError(false);
+                  } else {
+                    setIsError(true);
+                    setGetCommentValue("");
+                  }
+                } else {
+                  setIsError(false);
+                  setGetCommentValue(e.target.value);
+                }
               }
             }}
             InputProps={{
@@ -240,21 +256,25 @@ const DetailRecipe = () => {
             text="Send Comment"
             disabled={isDisabled}
             isLoading={isLoading}
-            onClick={handleAddComment}
+            onClick={() => {
+              if (!getUserData) {
+                handleErrModal();
+              } else {
+                handleAddComment();
+              }
+            }}
             sx={{
               width: { md: "25%", sm: "25%", xs: "50%" },
               marginBottom: { md: "10vh", sm: "10vh", xs: "5vh" },
             }}
           />
         </div>
-
         <Typography
           variant="h4"
           color="text.secondary"
           sx={{ fontSize: { xs: "30px", sm: "35px", md: "35px" } }}>
           Comments ({getComments.length})
         </Typography>
-
         <Typography
           variant="h4"
           color="text.secondary"
@@ -263,7 +283,6 @@ const DetailRecipe = () => {
             marginTop: { md: "10vh", sm: "10vh", xs: "5vh" },
             marginBottom: { md: "5vh", sm: "5vh", xs: "5vh" },
           }}></Typography>
-
         <CardCommentTemplate
           result={getComments}
           getId={getUserData?.accounts_id}
@@ -272,6 +291,16 @@ const DetailRecipe = () => {
               fetchComment();
             }
           }}
+          _onSuccessDelete={(e) => {
+            if (e === true) {
+              fetchComment();
+            }
+          }}
+        />
+        <ModalErrorTemplate
+          open={isModalErrOpen}
+          text="Please Login first before accessing this page"
+          onClose={() => setIsModalErrOpen(false)}
         />
       </Boxs>
     </>

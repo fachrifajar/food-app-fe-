@@ -140,9 +140,10 @@ const Register = () => {
   // handle "phone" value
   const handleChangePhone = (event) => {
     const newValue = event.target.value;
-    const maxLength = 12;
-    if (newValue.toString().length < maxLength) {
-      setErrMsgPhone("Please input a valid phone with at least 12 digits.");
+    const maxLength = 15;
+    const minLength = 10;
+    if (newValue.toString().length < minLength) {
+      setErrMsgPhone("Please input a valid phone with at least 10 digits.");
       setIsErrPhone(true);
       setPhone(null);
       return;

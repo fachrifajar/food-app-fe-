@@ -1,15 +1,23 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Stack from "@mui/material/Stack";
-import { styled } from "@mui/material/styles";
 
-import { useMediaQuery, Typography, Avatar, IconButton } from "@mui/material";
+import {
+  useMediaQuery,
+  Typography,
+  Avatar,
+  IconButton,
+  styled,
+  Box,
+  Paper,
+  Stack,
+} from "@mui/material";
 
+// import icons
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+// import components
 import ModalEditComment from "./modal-edit-comment";
+import ModalDelete from "./modal-delete";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -24,15 +32,21 @@ export default function CardCommentTemplate({
   result,
   getId,
   _onSuccess,
+  _onSuccessDelete
 }) {
   const isXs = useMediaQuery("(max-width: 600px)");
   const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
 
   const [isModalEditOpen, setIsModalEditOpen] = React.useState(false);
   const [getCommentsId, setGetCommentsId] = React.useState("");
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = React.useState(false);
 
   const handleSuccessModal = () => {
     setIsModalEditOpen(true);
+  };
+
+  const handleSuccessModalDelete = () => {
+    setIsModalDeleteOpen(true);
   };
 
   return (
@@ -41,6 +55,7 @@ export default function CardCommentTemplate({
         width: "100%",
         maxHeight: { md: "50vh", sm: "50vh", xs: "50vh" },
         overflow: "auto",
+        marginBottom: "50vh"
       }}>
       <Stack spacing={2}>
         {result &&
@@ -130,7 +145,10 @@ export default function CardCommentTemplate({
                     }}>
                     {formattedDate}{" "}
                     {item?.created_at !== item?.updated_at ? (
-                      <span> - [Edited comment : {formattedDateUpdatedAt}]</span>
+                      <span>
+                        {" "}
+                        - [Edited comment : {formattedDateUpdatedAt}]
+                      </span>
                     ) : null}
                   </Typography>
                 </div>
@@ -142,7 +160,6 @@ export default function CardCommentTemplate({
                         color="custom.default"
                         onClick={() => {
                           handleSuccessModal();
-                          // getCommentId
                         }}
                         sx={{ cursor: "pointer" }}>
                         <ModeEditOutlineIcon />
@@ -150,7 +167,7 @@ export default function CardCommentTemplate({
                       <IconButton
                         color="custom.default"
                         onClick={() => {
-                          // Handle delete click
+                          handleSuccessModalDelete();
                         }}
                         sx={{ cursor: "pointer" }}>
                         <DeleteIcon />
@@ -167,6 +184,13 @@ export default function CardCommentTemplate({
         onClose={() => setIsModalEditOpen(false)}
         _getCommentsId={getCommentsId}
         onSuccess={(e) => _onSuccess(e)}
+      />
+      <ModalDelete
+        title={"Are you sure you want to delete this comment?"}
+        open={isModalDeleteOpen}
+        onClose={() => setIsModalDeleteOpen(false)}
+        _getCommentsId={getCommentsId}
+        onSuccess={(e) => _onSuccessDelete(e)}
       />
     </Box>
   );
