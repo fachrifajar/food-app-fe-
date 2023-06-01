@@ -334,7 +334,7 @@ function Navbar({ _setTheme, getTheme }) {
                   onClick={authData ? handleOpenUserMenu : null}
                   sx={{ p: 0 }}>
                   {authData ? (
-                    <Avatar>H</Avatar>
+                    <Avatar>{authData?.username[0]}</Avatar>
                   ) : (
                     <ButtonTemplate
                       text="Login"

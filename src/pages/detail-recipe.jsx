@@ -21,33 +21,112 @@ const DetailRecipe = () => {
     (state) => state?.recipe?.recipeData?.data?.[0]
   );
 
+  const getUserData = useSelector((state) => state.auth?.profile?.data);
+
   const isXs = useMediaQuery("(max-width: 600px)");
   const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
 
   const [mode, setMode] = React.useState(localStorage.getItem("selectedTheme"));
-  //   const [getRecipeData, setGetRecipeData] = React.useState([]);
+
   const [getComments, setGetComments] = React.useState([]);
+  const [getCommentValue, setGetCommentValue] = React.useState("");
+  const [isError, setIsError] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isDisabled, setIsDisabled] = React.useState(true);
+
+  const fetchComment = async () => {
+    try {
+      const getComment = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/users/recipes/search/comment/${
+          getRecipeData?.recipes_id
+        }`
+      );
+
+      const sortedComments = getComment?.data?.data.sort((a, b) => {
+        return new Date(a.created_at) - new Date(b.created_at);
+      });
+
+      setGetComments(sortedComments);
+    } catch (error) {
+      console.log("fetchComment", error);
+    }
+  };
+
+  const handleAddComment = async () => {
+    try {
+      setIsLoading(true);
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/users/recipes/add/comments`,
+        {
+          accounts_id: getUserData?.accounts_id,
+          recipes_id: getRecipeData?.recipes_id,
+          comment: getCommentValue,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${getUserData?.accessToken}`,
+          },
+        }
+      );
+      console.log(response);
+
+      setIsLoading(false);
+    } catch (error) {
+      if (error?.response?.status === 401) {
+        handleRefreshToken();
+      } else {
+        console.log("ERRORhandleAddComment", error);
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const handleRefreshToken = async () => {
+    try {
+      const refreshTokenResponse = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/auth/token`,
+        {
+          withCredentials: true, // Include HTTTP ONLY cookies in the request
+        }
+      );
+      const newAccessToken = refreshTokenResponse?.data?.accessToken;
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/users/recipes/add/comments`,
+        {
+          accounts_id: getUserData?.accounts_id,
+          recipes_id: getRecipeData?.recipes_id,
+          comment: getCommentValue,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${newAccessToken}`,
+          },
+        }
+      );
+      console.log(response);
+      fetchComment();
+
+      setIsLoading(false);
+    } catch (error) {
+      console.log("ERRORgetRefreshToken", error);
+      setIsLoading(false);
+    }
+  };
 
   React.useEffect(() => {
-    const fetchComment = async () => {
-      //   setGetRecipeData(getData[0]);
-      try {
-        const getComment = await axios.get(
-          `${import.meta.env.VITE_BASE_URL}/users/recipes/search/comment/${
-            getRecipeData?.recipes_id
-          }`
-        );
-        console.log(getComment?.data?.data);
-        setGetComments(getComment?.data?.data);
-      } catch (error) {
-        console.log("fetchComment", error);
-      }
-    };
-
     fetchComment();
   }, []);
 
-  //   console.log("getData", getData[0]);
+  React.useEffect(() => {
+    if (getCommentValue) {
+      setIsDisabled(false);
+    } else {
+      setIsDisabled(true);
+    }
+  }, [getCommentValue]);
+
   return (
     <>
       <Navbar _setTheme={mode} getTheme={(e) => setMode(e)} />
@@ -134,6 +213,23 @@ const DetailRecipe = () => {
             justifyContent: "center",
           }}>
           <MultilineTemplate
+            label="Comments : "
+            onChange={(e) => {
+              if (e.target.value.length < 5) {
+                setIsError(true);
+                setGetCommentValue("");
+              } else {
+                setIsError(false);
+                setGetCommentValue(e.target.value);
+              }
+            }}
+            InputProps={{
+              inputProps: {
+                maxLength: 40,
+              },
+            }}
+            error={isError}
+            helperText={isError ? "Comment cannot be less than 5" : null}
             sx={{
               marginTop: { md: "10vh", sm: "10vh", xs: "5vh" },
             }}
@@ -142,6 +238,9 @@ const DetailRecipe = () => {
         <div style={{ display: "flex", justifyContent: "center" }}>
           <ButtonTemplate
             text="Send Comment"
+            disabled={isDisabled}
+            isLoading={isLoading}
+            onClick={handleAddComment}
             sx={{
               width: { md: "25%", sm: "25%", xs: "50%" },
               marginBottom: { md: "10vh", sm: "10vh", xs: "5vh" },
@@ -153,7 +252,7 @@ const DetailRecipe = () => {
           variant="h4"
           color="text.secondary"
           sx={{ fontSize: { xs: "30px", sm: "35px", md: "35px" } }}>
-          Comments
+          Comments ({getComments.length})
         </Typography>
 
         <Typography
@@ -165,7 +264,15 @@ const DetailRecipe = () => {
             marginBottom: { md: "5vh", sm: "5vh", xs: "5vh" },
           }}></Typography>
 
-        <CardCommentTemplate result={getComments} />
+        <CardCommentTemplate
+          result={getComments}
+          getId={getUserData?.accounts_id}
+          _onSuccess={(e) => {
+            if (e === true) {
+              fetchComment();
+            }
+          }}
+        />
       </Boxs>
     </>
   );
