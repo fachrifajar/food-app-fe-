@@ -17,7 +17,6 @@ import ModalSuccessTemplate from "../components/molecules/modal-success-template
 
 // import icons
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
 
 const DetailRecipe = () => {
   document.title = "Detail Recipe";
@@ -30,6 +29,9 @@ const DetailRecipe = () => {
   );
 
   const getUserData = useSelector((state) => state.auth?.profile?.data);
+
+  console.log(getRecipeData);
+  console.log(getUserData);
 
   const isXs = useMediaQuery("(max-width: 600px)");
   const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
@@ -47,6 +49,14 @@ const DetailRecipe = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isDisabled, setIsDisabled] = React.useState(true);
 
+  const [isFavoriteClicked, setIsFavoriteClicked] = React.useState(false);
+  const [getLoveCount, setGetLoveCount] = React.useState(getRecipeData?.love);
+
+  const handleFavoriteClick = () => {
+    setIsFavoriteClicked(!isFavoriteClicked);
+    handleLoveRecipe();
+  };
+
   const fetchComment = async () => {
     try {
       const getComment = await axios.get(
@@ -62,6 +72,87 @@ const DetailRecipe = () => {
       setGetComments(sortedComments);
     } catch (error) {
       console.log("fetchComment", error);
+    }
+  };
+
+  const fetchValidateLove = async (id) => {
+    try {
+      const refreshTokenResponse = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/auth/token`,
+        {
+          withCredentials: true, // Include HTTTP ONLY cookies in the request
+        }
+      );
+      const newAccessToken = refreshTokenResponse?.data?.accessToken;
+
+      const getValidate = await axios.get(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/users/recipes/love-recipe/validate/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${newAccessToken}`,
+          },
+        }
+      );
+
+      setIsFavoriteClicked(getValidate?.data?.data);
+
+      const getCount = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/users/recipes/love-recipe/count/${id}`
+      );
+
+      setGetLoveCount(getCount?.data?.data);
+    } catch (error) {
+      console.log("ERR-fetchValidateLove", error);
+
+      if (error?.response?.data?.message === "Invalid refresh token") {
+        handleExpModal();
+      }
+    }
+  };
+
+  const fetchCountLove = async (id) => {
+    try {
+      const getCount = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/users/recipes/love-recipe/count/${id}`
+      );
+
+      setGetLoveCount(getCount?.data?.data);
+    } catch (error) {
+      console.log("ERR-fetchCountLove", error);
+    }
+  };
+
+  const handleLoveRecipe = async () => {
+    try {
+      const refreshTokenResponse = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/auth/token`,
+        {
+          withCredentials: true, // Include HTTTP ONLY cookies in the request
+        }
+      );
+      const newAccessToken = refreshTokenResponse?.data?.accessToken;
+
+      const response = await axios.patch(
+        `${import.meta.env.VITE_BASE_URL}/users/recipes/add/like`,
+        {
+          recipes_id: getRecipeData?.recipes_id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${newAccessToken}`,
+          },
+        }
+      );
+
+      fetchCountLove(getRecipeData?.recipes_id);
+    } catch (error) {
+      console.log("ERR-handleLoveRecipe", error);
+
+      if (error?.response?.data?.message === "Invalid refresh token") {
+        handleExpModal();
+      }
     }
   };
 
@@ -151,6 +242,8 @@ const DetailRecipe = () => {
 
   React.useEffect(() => {
     fetchComment();
+
+    fetchValidateLove(getRecipeData?.recipes_id);
   }, []);
 
   React.useEffect(() => {
@@ -160,17 +253,6 @@ const DetailRecipe = () => {
       setIsDisabled(true);
     }
   }, [getCommentValue]);
-
-  // const [isBookmarkClicked, setIsBookmarkClicked] = React.useState(false);
-  const [isFavoriteClicked, setIsFavoriteClicked] = React.useState(false);
-
-  // const handleBookmarkClick = () => {
-  //   setIsBookmarkClicked(!isBookmarkClicked);
-  // };
-
-  const handleFavoriteClick = () => {
-    setIsFavoriteClicked(!isFavoriteClicked);
-  };
 
   return (
     <>
@@ -209,22 +291,17 @@ const DetailRecipe = () => {
               marginBottom: isXs ? "5vh" : "5vh",
             }}
           />
-          <div
-            style={{
+          <Typography
+            component="div"
+            sx={{
               width: isXs ? "100%" : isSm ? "50vw" : "50vw",
               display: "flex",
               marginBottom: isXs ? "5vh" : "10vh",
-              // marginTop: "-40px"
+              marginTop: "-30px",
+              // bgcolor: "custom.default2",
+              alignItems: "center",
+              borderRadius: "20px",
             }}>
-            {/* <BookmarkIcon
-              fontSize="large"
-              sx={{
-                color: isBookmarkClicked ? "red" : "gray",
-                cursor: "pointer",
-                marginLeft: "auto",
-              }}
-              onClick={handleBookmarkClick}
-            /> */}
             <FavoriteIcon
               fontSize="large"
               sx={{
@@ -234,28 +311,13 @@ const DetailRecipe = () => {
               }}
               onClick={handleFavoriteClick}
             />
-          </div>
-
-          {/* <div
-            style={{
-              position: "absolute",
-
-              top: "100%",
-              right: "26%",
-              // marginRight: "10px",
-              // marginBottom: "10px",
-            }}>
-            <FavoriteIcon
-              fontSize="large"
-              sx={{
-                color: "gray",
-                "&:hover": {
-                  color: "red",
-                  cursor: "pointer",
-                },
-              }}
-            />
-          </div> */}
+            <Typography
+              component="span"
+              sx={{ marginLeft: "1%" }}
+              color="text.secondary">
+              {getLoveCount} Like
+            </Typography>
+          </Typography>
         </div>
         <Typography
           variant="h4"

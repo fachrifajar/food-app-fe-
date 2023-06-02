@@ -20,6 +20,7 @@ const theme = (mode) =>
       },
       custom: {
         default: mode === "light" ? "#FFFFFFCC" : "#0A1929",
+        default2: mode === "light" ? "#FFF" : "#1A2027",
       },
     },
   });

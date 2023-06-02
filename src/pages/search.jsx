@@ -1,7 +1,8 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-
+import { useNavigate } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
+import * as recipeReducer from "../store/reducer/recipe";
 
 import Navbar from "../components/organisms/navbar";
 import Boxs from "../components/atoms/box-template";
@@ -9,6 +10,8 @@ import CardTemplate from "../components/molecules/card-template";
 
 const Search = () => {
   document.title = "Search";
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const getData = useSelector((state) => state?.recipe?.searchRecipeData?.data);
   const [mode, setMode] = React.useState(localStorage.getItem("selectedTheme"));
@@ -40,7 +43,15 @@ const Search = () => {
                       item?.photo
                     }`}
                     title={item?.title}
-                    // onClick={() => fetchClickCard(item?.slug)}
+                    onClick={() => {
+                      dispatch(
+                        recipeReducer.setRecipe({
+                          data: [item],
+                        })
+                      );
+
+                      navigate(`/detail-recipe/${item?.slug}`);
+                    }}
                   />
                 </Grid>
               </React.Fragment>

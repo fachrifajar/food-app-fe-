@@ -73,10 +73,12 @@ function App() {
     const getClickedData = suggestions.filter((item) => item.slug === event);
 
     dispatch(
-      recipeReducer.setSearchRecipe({
+      recipeReducer.setRecipe({
         data: getClickedData,
       })
     );
+
+    navigate(`/detail-recipe/${getClickedData?.[0]?.slug}`);
   };
 
   const fetchContent = async () => {
@@ -142,7 +144,6 @@ function App() {
             </Typography>
 
             <TextFieldTemplate
-   
               className="topContent-search-field"
               placeholder="Search Recipe..."
               sx={{
@@ -412,7 +413,7 @@ function App() {
           alignItems="center"
           // sx={{display: "flex", justifyContent: "center"}}
         >
-          {popRecipes.map((item, key) => (
+          {popRecipes?.map((item, key) => (
             <React.Fragment key={key}>
               <Grid item md={4} sm={4} xs={6}>
                 <CardTemplate
