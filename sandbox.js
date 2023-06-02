@@ -28,7 +28,6 @@
 
 // export default theme;
 
-
 // import React from "react";
 // import ReactDOM from "react-dom/client";
 // import App from "./App.jsx";
@@ -53,14 +52,6 @@
 //   </React.StrictMode>
 // );
 
-
-
-
-
-
-
-
-
 //
 
 // import { createTheme } from "@mui/material";
@@ -80,7 +71,6 @@
 // });
 
 // export default theme;
-
 
 // import React from "react";
 // import ReactDOM from "react-dom/client";
@@ -104,8 +94,6 @@
 //     </ThemeProvider>
 //   </React.StrictMode>
 // );
-
-
 
 // console.log(new Date().getTime())
 
@@ -138,13 +126,3 @@
 
 // const decryptedSlug = decrypt(encryptedSlug, encryptionKey);
 // console.log('Decrypted Slug:', decryptedSlug);
-
-
-
-
-
-
-
-
-
-

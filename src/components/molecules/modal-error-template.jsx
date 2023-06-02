@@ -7,7 +7,7 @@ const MyModal = styled(Modal)({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  marginBottom: "50vh"
+  marginBottom: "50vh",
 });
 
 const MyCard = styled(Card)(({ theme }) => ({
@@ -36,6 +36,7 @@ const ModalErrorTemplate = ({ open, onClose, text, children, _sx }) => {
             }}>
             {text}
           </Typography>
+          {children}
         </MyCard>
       </MyModal>
     </>

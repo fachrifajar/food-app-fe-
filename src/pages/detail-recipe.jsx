@@ -1,6 +1,8 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import * as authReducer from "../store/reducer/auth";
 
 import { Grid, Typography, useMediaQuery, useTheme } from "@mui/material";
 
@@ -15,10 +17,14 @@ import ModalSuccessTemplate from "../components/molecules/modal-success-template
 
 // import icons
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
 
 const DetailRecipe = () => {
   document.title = "Detail Recipe";
   const theme = useTheme();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const getRecipeData = useSelector(
     (state) => state?.recipe?.recipeData?.data?.[0]
   );
@@ -30,6 +36,7 @@ const DetailRecipe = () => {
 
   const [mode, setMode] = React.useState(localStorage.getItem("selectedTheme"));
   const [isModalErrOpen, setIsModalErrOpen] = React.useState(false);
+  const [isModalExp, setIsModalExp] = React.useState(false);
 
   const [isModalSuccessOpen, setIsModalSuccessOpen] = React.useState(false);
   const [successMsg, setSuccessMsg] = React.useState("");
@@ -123,6 +130,10 @@ const DetailRecipe = () => {
     } catch (error) {
       console.log("ERRORgetRefreshToken", error);
       setIsLoading(false);
+
+      if (error?.response?.data?.message === "Invalid refresh token") {
+        handleExpModal();
+      }
     }
   };
 
@@ -132,6 +143,10 @@ const DetailRecipe = () => {
 
   const handleSuccessModal = () => {
     setIsModalSuccessOpen(true);
+  };
+
+  const handleExpModal = () => {
+    setIsModalExp(true);
   };
 
   React.useEffect(() => {
@@ -145,6 +160,17 @@ const DetailRecipe = () => {
       setIsDisabled(true);
     }
   }, [getCommentValue]);
+
+  // const [isBookmarkClicked, setIsBookmarkClicked] = React.useState(false);
+  const [isFavoriteClicked, setIsFavoriteClicked] = React.useState(false);
+
+  // const handleBookmarkClick = () => {
+  //   setIsBookmarkClicked(!isBookmarkClicked);
+  // };
+
+  const handleFavoriteClick = () => {
+    setIsFavoriteClicked(!isFavoriteClicked);
+  };
 
   return (
     <>
@@ -180,9 +206,36 @@ const DetailRecipe = () => {
               width: isXs ? "100%" : isSm ? "50vw" : "50vw",
               marginTop: isXs ? "5vh" : "8vh",
               borderRadius: "10px",
-              marginBottom: isXs ? "5vh" : "10vh",
+              marginBottom: isXs ? "5vh" : "5vh",
             }}
           />
+          <div
+            style={{
+              width: isXs ? "100%" : isSm ? "50vw" : "50vw",
+              display: "flex",
+              marginBottom: isXs ? "5vh" : "10vh",
+              // marginTop: "-40px"
+            }}>
+            {/* <BookmarkIcon
+              fontSize="large"
+              sx={{
+                color: isBookmarkClicked ? "red" : "gray",
+                cursor: "pointer",
+                marginLeft: "auto",
+              }}
+              onClick={handleBookmarkClick}
+            /> */}
+            <FavoriteIcon
+              fontSize="large"
+              sx={{
+                color: isFavoriteClicked ? "red" : "gray",
+                cursor: "pointer",
+                marginLeft: "auto",
+              }}
+              onClick={handleFavoriteClick}
+            />
+          </div>
+
           {/* <div
             style={{
               position: "absolute",
@@ -323,6 +376,18 @@ const DetailRecipe = () => {
           onClose={() => setIsModalSuccessOpen(false)}
           text={successMsg}
         />
+        <ModalErrorTemplate
+          open={isModalExp}
+          text="Your session has expired. please Login"
+          onClose={() => setIsModalExp(false)}>
+          <ButtonTemplate
+            text="Login"
+            onClick={() => {
+              dispatch(authReducer.deleteAuthData());
+              navigate("/login");
+            }}
+          />
+        </ModalErrorTemplate>
       </Boxs>
     </>
   );

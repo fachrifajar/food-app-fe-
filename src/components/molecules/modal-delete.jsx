@@ -1,13 +1,16 @@
 import React from "react";
 import { Modal, Card, Typography, styled } from "@mui/material";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import * as authReducer from "../../store/reducer/auth";
 
 // import icon
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 
 // import components
 import ButtonTemplate from "../atoms/button-template";
+import ModalErrorTemplate from "./modal-error-template";
 
 const MyModal = styled(Modal)(({ theme, sx }) => ({
   display: "flex",
@@ -39,6 +42,10 @@ const ModalDelete = ({
   onSuccess,
   title,
 }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [isModalExp, setIsModalExp] = React.useState(false);
+
   const [authData, setAuthData] = React.useState(
     useSelector((state) => state.auth?.profile?.data?.accessToken)
   );
@@ -101,7 +108,16 @@ const ModalDelete = ({
     } catch (error) {
       console.log("ERRORgetRefreshToken", error);
       setIsLoading(false);
+
+      if (error?.response?.data?.message === "Invalid refresh token") {
+        onClose();
+        handleExpModal();
+      }
     }
+  };
+
+  const handleExpModal = () => {
+    setIsModalExp(true);
   };
 
   return (
@@ -146,6 +162,18 @@ const ModalDelete = ({
               color="error"
             />
           </div>
+          <ModalErrorTemplate
+            open={isModalExp}
+            text="Your session has expired. please Login"
+            onClose={() => setIsModalExp(false)}>
+            <ButtonTemplate
+              text="Login"
+              onClick={() => {
+                dispatch(authReducer.deleteAuthData());
+                navigate("/login");
+              }}
+            />
+          </ModalErrorTemplate>
 
           {children}
         </MyCard>
