@@ -223,9 +223,11 @@ function App() {
       <Boxs
         className="middleContent-container"
         _setTheme={mode}
-        _sx={{
-          // height: { md: "100vh", sm: "100vh", xs: "90vh" },
-        }}>
+        _sx={
+          {
+            // height: { md: "100vh", sm: "100vh", xs: "90vh" },
+          }
+        }>
         {/* TITLE CONTAINER */}
         <div
           className="middleContent-titleContainer"
@@ -350,6 +352,15 @@ function App() {
             <ButtonTemplate
               className="middleContent-button"
               text="Learn More"
+              onClick={() => {
+                dispatch(
+                  recipeReducer.setRecipe({
+                    data: [newRecipes],
+                  })
+                );
+
+                navigate(`/detail-recipe/${newRecipes?.slug}`);
+              }}
               sx={{
                 width: "150px",
                 borderRadius: "10px",
