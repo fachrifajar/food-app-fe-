@@ -6,7 +6,7 @@ import Select from "@mui/material/Select";
 import axios from "axios";
 
 const SortButton = ({ getSortType, getSortData }) => {
-  const [sortType, setSortType] = React.useState("2");
+  const [sortType, setSortType] = React.useState("createdDesc");
 
   const handleChange = async (event) => {
     const selectedSort = event.target.value;
@@ -34,20 +34,29 @@ const SortButton = ({ getSortType, getSortData }) => {
         labelId="demo-select-small-label"
         id="demo-select-small"
         value={sortType}
-        label="Age"
         onChange={handleChange}
-        defaultValue="2">
+        defaultValue="createdDesc">
         <MenuItem value="" disabled>
           <em>None</em>
         </MenuItem>
-        <MenuItem value="1" disabled={sortType === "1"}>
-          A-Z
+        <MenuItem value="loveDesc" disabled={sortType === "loveDesc"}>
+          Most Popular
         </MenuItem>
-        {/* <MenuItem value="z-a">Z-A</MenuItem> */}
-        <MenuItem value="2" disabled={sortType === "2"}>
+        <MenuItem value="loveAsc" disabled={sortType === "loveAsc"}>
+          Less Popular
+        </MenuItem>
+        <MenuItem value="createdDesc " disabled={sortType === "createdDesc"}>
           Newest
         </MenuItem>
-        {/* <MenuItem value="oldest">Oldest</MenuItem> */}
+        <MenuItem value="createdAsc " disabled={sortType === "createdAsc"}>
+          Oldest
+        </MenuItem>
+        <MenuItem value="titleAsc" disabled={sortType === "titleAsc"}>
+          A-Z
+        </MenuItem>
+        <MenuItem value="titleDesc" disabled={sortType === "titleDesc"}>
+          Z-A
+        </MenuItem>
       </Select>
     </FormControl>
   );

@@ -25,6 +25,7 @@ const Item = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(1),
   // textAlign: "center",
   color: theme.palette.text.secondary,
+  padding: "1% 2%",
 }));
 
 export default function CardCommentTemplate({
@@ -32,7 +33,7 @@ export default function CardCommentTemplate({
   result,
   getId,
   _onSuccess,
-  _onSuccessDelete
+  _onSuccessDelete,
 }) {
   const isXs = useMediaQuery("(max-width: 600px)");
   const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
@@ -55,7 +56,7 @@ export default function CardCommentTemplate({
         width: "100%",
         maxHeight: { md: "50vh", sm: "50vh", xs: "50vh" },
         overflow: "auto",
-        marginBottom: "50vh"
+        marginBottom: "50vh",
       }}>
       <Stack spacing={2}>
         {result &&

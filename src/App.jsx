@@ -86,7 +86,7 @@ function App() {
       const getRecipes = await axios.get(
         `${
           import.meta.env.VITE_BASE_URL
-        }/users/recipes/search/?page=1&limit=6&sort=true&sortType=2`
+        }/users/recipes/search/?page=1&limit=6&sort=true&sortType=createdDesc`
       );
       setNewRecipes(getRecipes?.data?.data?.[0]);
       setPoprecipes(getRecipes?.data?.data);
@@ -224,7 +224,7 @@ function App() {
         className="middleContent-container"
         _setTheme={mode}
         _sx={{
-          height: { md: "100vh", sm: "100vh", xs: "90vh" },
+          // height: { md: "100vh", sm: "100vh", xs: "90vh" },
         }}>
         {/* TITLE CONTAINER */}
         <div
@@ -288,6 +288,8 @@ function App() {
                 marginTop: isXs ? "5vh" : "8vh",
                 position: "relative",
                 borderRadius: "10px",
+                objectFit: "cover",
+                height: isXs ? "45vw" : isSm ? "75vh" : "75vh",
               },
             }}>
             <img
@@ -365,7 +367,7 @@ function App() {
         _setTheme={mode}
         _sx={{
           height: "100vh",
-          marginTop: { md: "10vh", sm: "10vh", xs: "0vh" },
+          marginTop: { md: "10vh", sm: "10vh", xs: "10vh" },
         }}>
         {/* TITLE CONTAINER */}
         <div
