@@ -15,12 +15,14 @@ const TextFieldTemplate = ({
   size,
   onKeyDown,
   onInput,
+  name
 }) => {
   const isXs = useMediaQuery("(max-width: 600px)");
   return (
     <>
       <TextField
         //   fullWidth
+        name={name}
         onKeyDown={onKeyDown}
         onInput={onInput}
         size={isXs ? "medium" : "small"}

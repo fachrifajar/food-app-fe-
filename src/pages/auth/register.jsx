@@ -25,102 +25,54 @@ import ModalErrorTemplate from "../../components/molecules/modal-error-template"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import {
+  INITIAL_STATE,
+  formReducer,
+} from "../../hook/register/registerReducer";
 
 const Register = () => {
   document.title = "Sign Up";
   const theme = useTheme();
   const navigate = useNavigate();
 
+  const [state, dispatch] = React.useReducer(formReducer, INITIAL_STATE);
+
   const [mode, setMode] = React.useState(localStorage.getItem("selectedTheme"));
   const [authData, setAuthData] = React.useState(
     useSelector((state) => state.auth?.profile?.data)
   );
 
-  const [name, setName] = React.useState(null);
-  const [isErrName, setIsErrName] = React.useState(false);
-  const [errMsgName, setErrMsgName] = React.useState("");
-
-  const [email, setEmail] = React.useState(null);
-  const [isErrEmail, setIsErrEmail] = React.useState(false);
-  const [errMsgEmail, setErrMsgEmail] = React.useState("");
-
-  const [phone, setPhone] = React.useState(null);
-  const [isErrPhone, setIsErrPhone] = React.useState(false);
-  const [errMsgPhone, setErrMsgPhone] = React.useState("");
-
-  const [password, setPassword] = React.useState(null);
-  const [isErrPassword, setIsErrPassword] = React.useState(false);
-  const [errMsgPassword, setErrMsgPassword] = React.useState("");
-  const [showPassword, setShowPassword] = React.useState(false);
-
-  const [confirmPassword, setConfirmPassword] = React.useState(null);
-  const [issErrConfirmPassword, setIssErrConfirmPassword] =
-    React.useState(false);
-  const [errMsgConfirmPassword, setErrMsgConfirmPassword] = React.useState("");
-
-  const [isChecked, setIsChecked] = React.useState(false);
-  const [isDisabled, setIsDisabled] = React.useState(true);
-  const [isLoading, setIsLoading] = React.useState(false);
-
-  const [errMsgApi, setErrMsgApi] = React.useState(null);
-  const [isModalErrOpen, setIsModalErrOpen] = React.useState(false);
-  const [isModalSuccessOpen, setIsModalSuccessOpen] = React.useState(false);
-
-  // handle "password" value
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
-
-  const handleChangePassword = (event) => {
-    const newValue = event.target.value;
-    const strRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!strRegex.test(newValue)) {
-      setErrMsgPassword(
-        "Password must contain combination of letters, numbers, uppercase and symbol"
-      );
-      setIsErrPassword(true);
-      setPassword(null);
-      return;
-    }
-    setIsErrPassword(false);
-    setPassword(newValue);
-  };
-
-  const handleChangeConfirmPass = (event) => {
-    const newValue = event.target.value;
-
-    if (newValue == password) {
-      setIssErrConfirmPassword(false);
-      setConfirmPassword(newValue);
-    } else {
-      setIssErrConfirmPassword(true);
-      setErrMsgConfirmPassword(
-        "Password-Confirmation does'nt match with Password"
-      );
-      setConfirmPassword(null);
-      return;
-    }
-  };
-
   // handle "name" value
   const handleChangeName = (event) => {
     const name = event.target.value;
     const strRegex = /^(?!(?:.*\s){3})[A-Za-z][A-Za-z\s\d]{2,25}$/;
+
     if (!strRegex.test(name)) {
-      setErrMsgName(
-        "Name must contain only letters & numbers and letters. Start with a letter and be between 3-20 characters long"
-      );
-      setIsErrName(true);
-      setName(null);
-      return;
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "name",
+          value: {
+            value: "",
+            isErr: true,
+            errMsg:
+              "Name must contain only letters & numbers and letters. Start with a letter and be between 3-20 characters long",
+          },
+        },
+      });
+    } else {
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "name",
+          value: {
+            value: name,
+            isErr: false,
+            errMsg: "",
+          },
+        },
+      });
     }
-    setIsErrName(false);
-    setName(name);
   };
 
   // handle "email" value
@@ -128,13 +80,30 @@ const Register = () => {
     const newValue = event.target.value;
     const strRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!strRegex.test(newValue)) {
-      setErrMsgEmail("Please input Valid Email Address");
-      setIsErrEmail(true);
-      setEmail(null);
-      return;
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "email",
+          value: {
+            value: "",
+            isErr: true,
+            errMsg: "Please input Valid Email Address",
+          },
+        },
+      });
+    } else {
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "email",
+          value: {
+            value: newValue,
+            isErr: false,
+            errMsg: "",
+          },
+        },
+      });
     }
-    setIsErrEmail(false);
-    setEmail(newValue);
   };
 
   // handle "phone" value
@@ -142,20 +111,114 @@ const Register = () => {
     const newValue = event.target.value;
     const maxLength = 15;
     const minLength = 10;
+
     if (newValue.toString().length < minLength) {
-      setErrMsgPhone("Please input a valid phone with at least 10 digits.");
-      setIsErrPhone(true);
-      setPhone(null);
-      return;
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "phone",
+          value: {
+            value: "",
+            isErr: true,
+            errMsg: "Please input a valid phone with at least 10 digits",
+          },
+        },
+      });
+    } else if (newValue.toString().length > maxLength) {
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "phone",
+          value: {
+            value: "",
+            isErr: true,
+            errMsg: `Phone number should not exceed ${maxLength} characters`,
+          },
+        },
+      });
+    } else {
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "phone",
+          value: {
+            value: newValue,
+            isErr: false,
+            errMsg: "",
+          },
+        },
+      });
     }
-    if (newValue.toString().length > maxLength) {
-      setPhone(newValue.toString().slice(0, maxLength));
-      setIsErrPhone(true);
-      setErrMsgPhone(`Phone number should not exceed ${maxLength} characters.`);
-      return;
+  };
+
+  const handleChangePassword = (event) => {
+    const newValue = event.target.value;
+    const strRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!strRegex.test(newValue)) {
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "pwd",
+          value: {
+            value: "",
+            isErr: true,
+            errMsg:
+              "Password min 8 characters & must contain combination of letters, numbers, uppercase and symbol",
+          },
+        },
+      });
+    } else {
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "pwd",
+          value: {
+            value: newValue,
+            isErr: false,
+            errMsg: "",
+          },
+        },
+      });
     }
-    setPhone(newValue);
-    setIsErrPhone(false);
+  };
+  // handle "password" value
+  const handleClickShowPassword = () => {
+    dispatch({ type: "TOGGLE_SHOW_PASSWORD" });
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handleChangeConfirmPass = (event) => {
+    const newValue = event.target.value;
+
+    if (newValue == state.pwd.value.value) {
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "confirmPwd",
+          value: {
+            value: newValue,
+            isErr: false,
+            errMsg: "",
+          },
+        },
+      });
+    } else {
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: {
+          name: "confirmPwd",
+          value: {
+            value: "",
+            isErr: true,
+            errMsg: "Password-Confirmation does'nt match with Password",
+          },
+        },
+      });
+    }
   };
 
   // handle disable button when params "incomplete"
@@ -164,46 +227,43 @@ const Register = () => {
       navigate("/");
     }
 
-    if (name && email && phone && password && confirmPassword && isChecked) {
-      setIsDisabled(false);
+    if (
+      state.name.value.value &&
+      state.email.value.value &&
+      state.phone.value.value &&
+      state.pwd.value.value &&
+      state.confirmPwd.value.value &&
+      state.isChecked
+    ) {
+      dispatch({ type: "HANDLE_DISABLED", payload: { isDisabled: false } });
     } else {
-      setIsDisabled(true);
+      dispatch({ type: "HANDLE_DISABLED", payload: { isDisabled: true } });
     }
-  }, [name, email, phone, password, confirmPassword, isChecked]);
-
-  // handle success modal
-  const handleSuccessModal = () => {
-    setIsModalSuccessOpen(true);
-  };
-
-  const handleErrModal = () => {
-    setIsModalErrOpen(true);
-  };
+  }, [state.isChecked]);
 
   // handle register button
   const handleRegister = async () => {
     try {
-      setIsLoading(true);
-
-      setErrMsgApi(null);
+      dispatch({ type: "FETCH_START" });
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/users/register`,
         {
-          email,
-          phone_number: phone,
-          username: name,
-          password,
+          email: state.email.value.value,
+          phone_number: state.phone.value.value,
+          username: state.name.value.value,
+          password: state.pwd.value.value,
         }
       );
-      setIsLoading(false);
-      handleSuccessModal();
-      setIsModalErrOpen(false);
-      // redirect("/login");
+      console.log(response);
+
+      dispatch({ type: "FETCH_SUCCESS" });
     } catch (error) {
       console.log("handleRegisterUserERROR", error);
-      setIsLoading(false);
-      handleErrModal();
-      setErrMsgApi(error?.response?.data?.message?.message);
+
+      dispatch({
+        type: "FETCH_ERROR",
+        payload: { errMsg: error?.response?.data?.message?.message },
+      });
     }
   };
 
@@ -233,8 +293,8 @@ const Register = () => {
             label="Name"
             placeholder="Enter your name"
             onChange={handleChangeName}
-            error={isErrName ? true : false}
-            helperText={isErrName ? errMsgName : null}
+            error={state.name.value.isErr}
+            helperText={state.name.value.errMsg}
             InputProps={{
               inputProps: {
                 maxLength: 25,
@@ -245,31 +305,31 @@ const Register = () => {
             label="Email"
             placeholder="Enter your email"
             onChange={handleChangeEmail}
-            error={isErrEmail ? true : false}
-            helperText={isErrEmail ? errMsgEmail : null}
+            error={state.email.value.isErr}
+            helperText={state.email.value.errMsg}
           />
           <TextFieldTemplate
             label="Phone Number"
             placeholder="Enter your Phone Number"
             type="number"
             onChange={handleChangePhone}
-            error={isErrPhone ? true : false}
-            helperText={isErrPhone ? errMsgPhone : null}
+            error={state.phone.value.isErr}
+            helperText={state.phone.value.errMsg}
           />
           <TextFieldTemplate
             label="Password"
             placeholder="Enter your Password"
-            type={showPassword ? "text" : "password"}
+            type={state.showPwd ? "text" : "password"}
             onChange={handleChangePassword}
-            error={isErrPassword ? true : false}
-            helperText={isErrPassword ? errMsgPassword : null}
+            error={state.pwd.value.isErr}
+            helperText={state.pwd.value.errMsg}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
                     onClick={handleClickShowPassword}
                     onMouseDown={handleMouseDownPassword}>
-                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                    {state.showPwd ? <Visibility /> : <VisibilityOff />}
                   </IconButton>
                 </InputAdornment>
               ),
@@ -283,9 +343,9 @@ const Register = () => {
             placeholder="Enter your Password"
             type="password"
             onChange={handleChangeConfirmPass}
-            disabled={password ? false : true}
-            error={issErrConfirmPassword ? true : false}
-            helperText={issErrConfirmPassword ? errMsgConfirmPassword : null}
+            disabled={state.pwd.value.value ? false : true}
+            error={state.confirmPwd.value.isErr}
+            helperText={state.confirmPwd.value.errMsg}
           />
           <div
             style={{
@@ -299,12 +359,11 @@ const Register = () => {
                   sx={{
                     color: "text.contrastText",
                   }}
+                  checked={state.isChecked}
+                  onChange={() => dispatch({ type: "TOGGLE_CHECKBOX" })}
                 />
               }
               label="I agree to the terms & conditions"
-              onChange={() => {
-                setIsChecked(!isChecked);
-              }}
               sx={{
                 color: "text.contrastText",
               }}
@@ -312,8 +371,8 @@ const Register = () => {
           </div>
           <ButtonTemplate
             text="Register"
-            isLoading={isLoading}
-            disabled={isDisabled}
+            isLoading={state.isLoading}
+            disabled={state.isDisabled}
             onClick={handleRegister}
           />
           <Typography
@@ -327,7 +386,7 @@ const Register = () => {
             <span onClick={() => navigate("/login")}>Log in Here</span>
           </Typography>
           <ModalSuccessTemplate
-            open={isModalSuccessOpen}
+            open={state.isModalSuccessOpen}
             // onClose={() => setIsModalSuccessOpen(false)}
             text="Your account has been created successfully!"
             children={
@@ -343,9 +402,9 @@ const Register = () => {
             }
           />
           <ModalErrorTemplate
-            open={isModalErrOpen}
-            text={errMsgApi}
-            onClose={() => setIsModalErrOpen(false)}
+            open={state.isErrModalOpen}
+            text={state.errMsgApi.errMsg}
+            onClose={() => dispatch({ type: "CLOSE_MODAL" })}
           />
         </Boxs>
       </AuthContent>
