@@ -45,7 +45,7 @@ const Register = () => {
   // handle "name" value
   const handleChangeName = (event) => {
     const name = event.target.value;
-    const strRegex = /^(?!(?:.*\s){3})[A-Za-z][A-Za-z\s\d]{2,25}$/;
+    const strRegex = /^(?!(?:.*\s){3})[A-Za-z][A-Za-z\s\d]{5,25}$/;
 
     if (!strRegex.test(name)) {
       dispatch({

@@ -78,6 +78,7 @@ const settings = ["Logout"];
 function Navbar({ _setTheme, getTheme }) {
   const setTheme = theme(_setTheme);
   const isXs = useMediaQuery("(max-width: 900px)");
+  const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -334,7 +335,21 @@ function Navbar({ _setTheme, getTheme }) {
                   onClick={authData ? handleOpenUserMenu : null}
                   sx={{ p: 0 }}>
                   {authData ? (
-                    <Avatar>{authData?.username[0]}</Avatar>
+                    authData?.profilePicture.includes("http") ? (
+                      <Avatar>{authData?.username[0]}</Avatar>
+                    ) : (
+                      <img
+                        src={`${import.meta.env.VITE_CLOUDINARY_URL}${
+                          authData?.profilePicture
+                        }`}
+                        alt="navbar-user-img"
+                        style={{
+                          borderRadius: "100%",
+                          height: isXs ? "40px" : isSm ? "50px" : "50px",
+                          width: isXs ? "40px" : isSm ? "50px" : "50px",
+                        }}
+                      />
+                    )
                   ) : (
                     <ButtonTemplate
                       text="Login"

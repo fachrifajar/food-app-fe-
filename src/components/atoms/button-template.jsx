@@ -10,13 +10,16 @@ const ButtonTemplate = ({
   sx,
   color,
   endIcon,
+  component,
+  variant,
 }) => {
   if (isLoading) {
     return (
       <LoadingButton
         fullWidth
+        component={component}
         loading={true}
-        variant="contained"
+        variant={variant ? variant : "contained"}
         disabled={disabled}
         onClick={onClick}
         sx={{
@@ -33,8 +36,9 @@ const ButtonTemplate = ({
   return (
     <Button
       color={color}
+      component={component}
       fullWidth
-      variant="contained"
+      variant={variant ? variant : "contained"}
       disabled={disabled}
       onClick={onClick}
       endIcon={endIcon}
