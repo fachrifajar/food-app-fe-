@@ -56,7 +56,7 @@ const Register = () => {
             value: "",
             isErr: true,
             errMsg:
-              "Name must contain only letters & numbers and letters. Start with a letter and be between 3-20 characters long",
+              "Name must contain only letters & numbers and letters. Start with a letter and be between 5-20 characters long",
           },
         },
       });

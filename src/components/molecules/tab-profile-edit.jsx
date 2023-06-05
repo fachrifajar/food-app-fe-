@@ -25,13 +25,21 @@ const TabProfileEdit = ({ onSuccess }) => {
   const [previewImage, setPreviewImage] = React.useState(null);
 
   const [isLoading, setIsLoading] = React.useState(false);
-  const [isErr, setIsErr] = React.useState(false);
+  const [isDisabled, setIsDisabled] = React.useState(false);
 
   const [modalSuccess, setModalSuccess] = React.useState(false);
   const [successMsg, setSuccessMsg] = React.useState("");
 
   const [modalErr, setModalErr] = React.useState(false);
   const [errMsg, setErrMsg] = React.useState("");
+
+  React.useEffect(() => {
+    if (name?.value || selectedImage) {
+      setIsDisabled(false);
+    } else {
+      setIsDisabled(true);
+    }
+  }, [name?.value, selectedImage]);
 
   const handleChangeName = (event) => {
     const newName = event.target.value;
@@ -43,7 +51,7 @@ const TabProfileEdit = ({ onSuccess }) => {
         value: "",
         isErr: true,
         errMsg:
-          "Name must contain only letters & numbers and letters. Start with a letter and be between 3-20 characters long",
+          "Name must contain only letters & numbers and letters. Start with a letter and be between 5-20 characters long",
       });
     } else {
       setName({ ...name, value: newName, isErr: false, errMsg: "" });
@@ -69,7 +77,7 @@ const TabProfileEdit = ({ onSuccess }) => {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
-      setIsErr(false);
+
       const refreshTokenResponse = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/auth/token`,
         {
@@ -78,54 +86,56 @@ const TabProfileEdit = ({ onSuccess }) => {
       );
       const newAccessToken = refreshTokenResponse?.data?.accessToken;
 
-      const response = await axios.patch(
-        `${import.meta.env.VITE_BASE_URL}/users/edit/${
-          getUserData?.accounts_id
-        }`,
-        {
-          username: name?.value == "" ? null : name?.value,
-          profile_picture: selectedImage,
-        },
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${newAccessToken}`,
+      if (name?.value || selectedImage) {
+        const response = await axios.patch(
+          `${import.meta.env.VITE_BASE_URL}/users/edit/${
+            getUserData?.accounts_id
+          }`,
+          {
+            username: name?.value == "" ? null : name?.value,
+            profile_picture: selectedImage,
           },
-        }
-      );
-
-      const validateUsername = response?.data?.data?.username;
-      const validateProfilePicture = response?.data?.data?.profile_picture;
-
-      if (validateUsername || validateProfilePicture) {
-        setSuccessMsg(
-          `${validateUsername ? "Username" : ""}${
-            validateUsername && validateProfilePicture ? " & " : ""
-          }${
-            validateProfilePicture ? "Profile Picture" : ""
-          } successfully updated`
-        );
-        const redux = dispatch(
-          authReducer.setAuthProfile({
-            data: {
-              ...getUserData,
-              ...(validateUsername && { username: validateUsername }),
-              ...(validateProfilePicture && {
-                profilePicture: validateProfilePicture,
-              }),
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${newAccessToken}`,
             },
-          })
+          }
         );
-        onSuccess(redux?.payload?.data);
-      }
 
-      setIsLoading(false);
-      setIsErr(false);
-      setModalSuccess(true);
+        const validateUsername = response?.data?.data?.username;
+        const validateProfilePicture = response?.data?.data?.profile_picture;
+
+        if (validateUsername || validateProfilePicture) {
+          setSuccessMsg(
+            `${validateUsername ? "Username" : ""}${
+              validateUsername && validateProfilePicture ? " & " : ""
+            }${
+              validateProfilePicture ? "Profile Picture" : ""
+            } successfully updated`
+          );
+          const redux = dispatch(
+            authReducer.setAuthProfile({
+              data: {
+                ...getUserData,
+                ...(validateUsername && { username: validateUsername }),
+                ...(validateProfilePicture && {
+                  profilePicture: validateProfilePicture,
+                }),
+              },
+            })
+          );
+          onSuccess(redux?.payload?.data);
+        }
+
+        setIsLoading(false);
+        setModalSuccess(true);
+      }
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       setIsLoading(false);
-      setIsErr(true);
+      setModalErr(true);
+      setErrMsg(error?.response?.data?.message?.message);
     }
   };
 
@@ -199,6 +209,7 @@ const TabProfileEdit = ({ onSuccess }) => {
         )}
         <Box textAlign="center">
           <ButtonTemplate
+            disabled={isDisabled}
             isLoading={isLoading}
             onClick={handleSubmit}
             text="submit change"
@@ -214,6 +225,11 @@ const TabProfileEdit = ({ onSuccess }) => {
         open={modalSuccess}
         onClose={() => setModalSuccess(false)}
         text={successMsg}
+      />
+      <ModalErrorTemplate
+        open={modalErr}
+        onClose={() => setModalErr(false)}
+        text={errMsg}
       />
     </>
   );
