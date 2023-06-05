@@ -8,6 +8,8 @@ export default function PaginationTemplate({
   pages,
   fetchedData,
   sortType,
+  urlParams,
+  limit,
 }) {
   const [currentPages, setCurrentPages] = React.useState(1);
 
@@ -20,7 +22,7 @@ export default function PaginationTemplate({
         const getRecipes = await axios.get(
           `${
             import.meta.env.VITE_BASE_URL
-          }/users/recipes/search/?page=${page}&limit=6&sort=true&sortType=${sortType}`
+          }${urlParams}?page=${page}&limit=${limit}&sort=true&sortType=${sortType}`
         );
 
         fetchedData(getRecipes?.data?.data);
@@ -29,8 +31,6 @@ export default function PaginationTemplate({
       console.log("errorPagination", error);
     }
   };
-
-
 
   return (
     <Stack spacing={2}>

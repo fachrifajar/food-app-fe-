@@ -5,19 +5,19 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import axios from "axios";
 
-const SortButton = ({ getSortType, getSortData }) => {
+const SortButton = ({ getSortType, getSortData, urlParams }) => {
   const [sortType, setSortType] = React.useState("createdDesc");
 
   const handleChange = async (event) => {
     const selectedSort = event.target.value;
     setSortType(selectedSort);
     getSortType(selectedSort);
+
     if (selectedSort !== sortType) {
+      console.count("fetch sort");
       try {
         const getRecipes = await axios.get(
-          `${
-            import.meta.env.VITE_BASE_URL
-          }/users/recipes/search/?page=1&limit=6&sort=true&sortType=${selectedSort}`
+          `${import.meta.env.VITE_BASE_URL}${urlParams}${selectedSort}`
         );
 
         getSortData(getRecipes?.data?.data);
@@ -45,10 +45,10 @@ const SortButton = ({ getSortType, getSortData }) => {
         <MenuItem value="loveAsc" disabled={sortType === "loveAsc"}>
           Less Popular
         </MenuItem>
-        <MenuItem value="createdDesc " disabled={sortType === "createdDesc"}>
+        <MenuItem value="createdDesc" disabled={sortType === "createdDesc"}>
           Newest
         </MenuItem>
-        <MenuItem value="createdAsc " disabled={sortType === "createdAsc"}>
+        <MenuItem value="createdAsc" disabled={sortType === "createdAsc"}>
           Oldest
         </MenuItem>
         <MenuItem value="titleAsc" disabled={sortType === "titleAsc"}>

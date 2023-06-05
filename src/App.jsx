@@ -41,7 +41,7 @@ function App() {
   const [popRecipes, setPoprecipes] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState(1);
   const [currentPages, setCurrentPages] = React.useState(1);
-  const [getSortType, setGetSortType] = React.useState(2);
+  const [getSortType, setGetSortType] = React.useState("createdDesc");
 
   const fetchSuggestions = async (value) => {
     try {
@@ -411,6 +411,7 @@ function App() {
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <SortButton
+            urlParams="/users/recipes/search/?page=1&limit=6&sort=true&sortType="
             getSortType={(e) => setGetSortType(e)}
             getSortData={(e) => {
               setPoprecipes(e);
@@ -445,6 +446,8 @@ function App() {
             pages={(e) => setCurrentPages(e)}
             fetchedData={(e) => setPoprecipes(e)}
             sortType={getSortType}
+            urlParams="/users/recipes/search/"
+            limit="6"
           />
         </div>
         <br />

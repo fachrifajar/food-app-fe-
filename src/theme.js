@@ -8,7 +8,7 @@ const theme = (mode) =>
         main: mode === "light" ? "#EFC81A" : "#42A5F5",
       },
       secondary: {
-        main: mode === "light" ? "#EFC81ACC" : "#90CAF9",
+        main: mode === "light" ? "#696f79" : "#90CAF9",
       },
       text: {
         primary: mode === "light" ? "#2E266F" : "#FFF",

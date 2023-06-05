@@ -14,6 +14,7 @@ import CollectionsIcon from "@mui/icons-material/Collections";
 import Navbar from "../components/organisms/navbar";
 import Boxs from "../components/atoms/box-template";
 import TabProfileEdit from "../components/molecules/tab-profile-edit";
+import TabProfileCard from "../components/molecules/tab-profile-card";
 
 const Profile = () => {
   document.title = "Profile";
@@ -93,6 +94,7 @@ const Profile = () => {
         </Tabs>
 
         {value === 1 ? <TabProfileEdit onSuccess={updateData} /> : null}
+        {value === 0 ? <TabProfileCard /> : null}
         {/* </Box> */}
       </Boxs>
     </>

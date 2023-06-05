@@ -5,7 +5,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { CardActionArea } from "@mui/material";
 
-export default function CardTemplate({ image,title, onClick }) {
+export default function CardTemplate({ image, title, onClick, children }) {
   return (
     <Card
       sx={
@@ -33,10 +33,12 @@ export default function CardTemplate({ image,title, onClick }) {
             variant="h5"
             component="div"
             textAlign="center"
-            color="text.secondary">
+            color="text.secondary"
+            sx={{ fontSize: { xs: "20px", sm: "24px", md: "24px" } }}
+            >
             {title}
+            {children}
           </Typography>
-  
         </CardContent>
       </CardActionArea>
     </Card>
