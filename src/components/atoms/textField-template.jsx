@@ -45,24 +45,24 @@ const TextFieldTemplate = ({
           ...InputProps,
         }}
         sx={{
-          // "& label": {
-          //   color: "#46505c",
-          // },
-          // "& label.Mui-focused": {
-          //   color: "text.secondary",
-          // },
-          // "& .MuiOutlinedInput-root": {
-          //   "& fieldset": {
-          //     borderColor: "#8692a6",
-          //   },
-          //   "&:hover fieldset": {
-          //     borderColor: "secondary",
-          //   },
-          //   "&.Mui-focused fieldset": {
-          //     borderColor: "secondary",
-          //   },
-          // },
-          // width: { xs: "20rem", sm: "20rem", md: "25rem" },
+          "& label": {
+            color: "#46505c",
+          },
+          "& label.Mui-focused": {
+            color: "text.secondary",
+          },
+          "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              borderColor: "#8692a6",
+            },
+            "&:hover fieldset": {
+              borderColor: "secondary",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "secondary",
+            },
+          },
+          width: { xs: "20rem", sm: "20rem", md: "25rem" },
           ...sx,
         }}
       />
