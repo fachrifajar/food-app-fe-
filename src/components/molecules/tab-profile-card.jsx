@@ -23,6 +23,7 @@ const TabProfileCard = () => {
     useSelector((state) => state.auth?.profile?.data)
   );
   const [myRecipes, setMyRecipes] = React.useState([]);
+  const [myLoveRecipes, setMyLoveRecipes] = React.useState([]);
   const [totalPages, setTotalPages] = React.useState([]);
   const [currentPages, setCurrentPages] = React.useState(1);
   const [getSortType, setGetSortType] = React.useState("createdDesc");
@@ -44,6 +45,24 @@ const TabProfileCard = () => {
 
       setMyRecipes(getRecipes?.data?.data);
       setTotalPages(Math.ceil(getRecipes?.data?.total / 6));
+
+      const refreshTokenResponse = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/auth/token`,
+        {
+          withCredentials: true,
+        }
+      );
+      const newAccessToken = refreshTokenResponse?.data?.accessToken;
+
+      const myLoveRecipes = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/users/recipes/love-recipe`,
+        {
+          headers: {
+            Authorization: `Bearer ${newAccessToken}`,
+          },
+        }
+      );
+      setMyLoveRecipes(myLoveRecipes?.data?.data);
     } catch (error) {
       console.log(error, "ERRORfetchContent");
     }
@@ -213,7 +232,34 @@ const TabProfileCard = () => {
             </div>
             <br />
           </>
-        ) : null}
+        ) : (
+          <>
+            <Grid
+              container
+              spacing={2}
+              direction="row"
+              justifyContent="center"
+              alignItems="center">
+              {myLoveRecipes?.map((item, key) => {
+                return (
+                  <React.Fragment key={key}>
+                    <Grid item md={4} sm={4} xs={6}>
+                      <CardTemplate
+                        image={`${import.meta.env.VITE_CLOUDINARY_URL}${
+                          item?.photo
+                        }`}
+                        title={item?.title}
+                        onClick={() => {
+                          handleClickCard(item);
+                        }}
+                      />
+                    </Grid>
+                  </React.Fragment>
+                );
+              })}
+            </Grid>
+          </>
+        )}
       </Typography>
     </>
   );
