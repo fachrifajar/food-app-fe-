@@ -1,14 +1,23 @@
 import React from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import * as recipeReducer from "../../store/reducer/recipe";
+
 import { Tab, Tabs, Typography, Grid } from "@mui/material";
+import ModeIcon from "@mui/icons-material/Mode";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 // importing components
 import CardTemplate from "./card-template";
 import SortButton from "./sort-button";
 import PaginationTemplate from "./pagination-template";
+import ModalEditRecipe from "./modal-edit-recipe";
 
 const TabProfileCard = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [value, setValue] = React.useState(0);
   const [getUserData, setGetUserData] = React.useState(
     useSelector((state) => state.auth?.profile?.data)
@@ -17,6 +26,9 @@ const TabProfileCard = () => {
   const [totalPages, setTotalPages] = React.useState([]);
   const [currentPages, setCurrentPages] = React.useState(1);
   const [getSortType, setGetSortType] = React.useState("createdDesc");
+
+  const [isModalEditOpen, setIsModalEditOpen] = React.useState(false);
+  const [getClickedData, setGetClickedData] = React.useState([]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -27,16 +39,24 @@ const TabProfileCard = () => {
       const getRecipes = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/users/recipes/search/myrecipe/${
           getUserData?.accounts_id
-        }?page=1&limit=3&sort=true&sortType=createdDesc`
+        }?page=${currentPages}&limit=3&sort=true&sortType=${getSortType}`
       );
 
       setMyRecipes(getRecipes?.data?.data);
       setTotalPages(Math.ceil(getRecipes?.data?.total / 6));
-
-      console.log(getRecipes?.data?.data);
     } catch (error) {
       console.log(error, "ERRORfetchContent");
     }
+  };
+
+  const handleClickCard = (item) => {
+    dispatch(
+      recipeReducer.setRecipe({
+        data: [item],
+      })
+    );
+
+    navigate(`/detail-recipe/${item?.slug}`);
   };
 
   React.useEffect(() => {
@@ -102,7 +122,9 @@ const TabProfileCard = () => {
                           item?.photo
                         }`}
                         title={item?.title}
-                        onClick={() => fetchClickCard(item?.slug)}>
+                        onClick={() => {
+                          handleClickCard(item);
+                        }}>
                         {/* <br /> */}
                         <Typography
                           component="div"
@@ -116,6 +138,42 @@ const TabProfileCard = () => {
                             <li style={{ padding: 0 }}>
                               Count of Likes : {item?.love}
                             </li>
+                          </Typography>
+
+                          <Typography
+                            component="div"
+                            textAlign="center"
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              marginTop: "5%",
+                            }}>
+                            <ModeIcon
+                              onClick={() => {
+                                setGetClickedData(item);
+                                setIsModalEditOpen(true);
+                              }}
+                              sx={{
+                                cursor: "pointer",
+                                "&:hover": {
+                                  transition: "transform 0.3s ease",
+                                  "&:active": {
+                                    transform: "rotate(45deg)",
+                                  },
+                                },
+                              }}
+                            />
+                            <DeleteIcon
+                              sx={{
+                                cursor: "pointer",
+                                "&:hover": {
+                                  transition: "transform 0.3s ease",
+                                  "&:active": {
+                                    transform: "rotate(45deg)",
+                                  },
+                                },
+                              }}
+                            />
                           </Typography>
                         </Typography>
                       </CardTemplate>
@@ -138,6 +196,19 @@ const TabProfileCard = () => {
                 sortType={getSortType}
                 urlParams={`/users/recipes/search/myrecipe/${getUserData?.accounts_id}`}
                 limit="3"
+              />
+              <ModalEditRecipe
+                open={isModalEditOpen}
+                onClose={() => setIsModalEditOpen(false)}
+                getRecipeData={getClickedData}
+                // _getCommentsId={getCommentsId}
+                onSuccess={(e) => {
+                  if (e) {
+                    fetchContent();
+
+                    // setIsModalEditOpen(false);
+                  }
+                }}
               />
             </div>
             <br />

@@ -8,10 +8,12 @@ const MultilineTemplate = ({
   error,
   helperText,
   InputProps,
+  placeholder,
 }) => {
   const isXs = useMediaQuery("(max-width: 600px)");
   return (
     <TextField
+      placeholder={placeholder}
       id="filled-multiline-static"
       label={label}
       multiline

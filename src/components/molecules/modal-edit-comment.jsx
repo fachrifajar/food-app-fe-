@@ -59,7 +59,7 @@ const ModalEditComment = ({
       setIsLoading(true);
 
       const response = await axios.patch(
-        `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/${_getCommentsId}`,
+        `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/comment/${_getCommentsId}`,
         {
           comment: getCommentValue,
         },
@@ -96,7 +96,7 @@ const ModalEditComment = ({
       setAuthData(newAccessToken);
 
       const responseHandleEdit = await axios.patch(
-        `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/${_getCommentsId}`,
+        `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/comment/${_getCommentsId}`,
         {
           comment: getCommentValue,
         },

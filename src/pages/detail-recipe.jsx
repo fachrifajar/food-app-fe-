@@ -27,7 +27,7 @@ const DetailRecipe = () => {
   const getRecipeData = useSelector(
     (state) => state?.recipe?.recipeData?.data?.[0]
   );
-    
+
   const getUserData = useSelector((state) => state.auth?.profile?.data);
 
   console.log(getRecipeData);

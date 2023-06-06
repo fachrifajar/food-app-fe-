@@ -23,7 +23,8 @@ export default function CardTemplate({ image, title, onClick, children }) {
           image={image}
           alt="card-img"
           sx={{ objectFit: "cover" }}
-        />
+          />
+          </CardActionArea>
         <CardContent
         //  sx={{ padding: 0 }}
         >
@@ -40,7 +41,6 @@ export default function CardTemplate({ image, title, onClick, children }) {
             {children}
           </Typography>
         </CardContent>
-      </CardActionArea>
     </Card>
   );
 }

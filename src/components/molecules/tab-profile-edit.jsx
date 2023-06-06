@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import * as authReducer from "../../store/reducer/auth";
 
 import { Typography, Box, Button } from "@mui/material";
@@ -11,7 +12,8 @@ import ModalSuccessTemplate from "./modal-success-template";
 
 const TabProfileEdit = ({ onSuccess }) => {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
+  
   const [getUserData, setGetUserData] = React.useState(
     useSelector((state) => state.auth?.profile?.data)
   );
@@ -32,6 +34,8 @@ const TabProfileEdit = ({ onSuccess }) => {
 
   const [modalErr, setModalErr] = React.useState(false);
   const [errMsg, setErrMsg] = React.useState("");
+
+  const [isModalExp, setIsModalExp] = React.useState(false);
 
   React.useEffect(() => {
     if (name?.value || selectedImage) {
@@ -132,10 +136,15 @@ const TabProfileEdit = ({ onSuccess }) => {
         setModalSuccess(true);
       }
     } catch (error) {
-      // console.error(error);
+      console.error(error);
       setIsLoading(false);
-      setModalErr(true);
-      setErrMsg(error?.response?.data?.message?.message);
+
+      if (error?.response?.data?.message === "Invalid refresh token") {
+        setIsModalExp(true);
+      } else {
+        setModalErr(true);
+        setErrMsg(error?.response?.data?.message?.message);
+      }
     }
   };
 
@@ -231,6 +240,18 @@ const TabProfileEdit = ({ onSuccess }) => {
         onClose={() => setModalErr(false)}
         text={errMsg}
       />
+      <ModalErrorTemplate
+        open={isModalExp}
+        text="Your session has expired. please Login"
+        onClose={() => setIsModalExp(false)}>
+        <ButtonTemplate
+          text="Login"
+          onClick={() => {
+            dispatch(authReducer.deleteAuthData());
+            navigate("/login");
+          }}
+        />
+      </ModalErrorTemplate>
     </>
   );
 };
