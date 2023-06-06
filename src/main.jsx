@@ -16,6 +16,7 @@ import Login from "./pages/auth/login";
 import Profile from "./pages/profile";
 import Search from "./pages/search";
 import DetailRecipe from "./pages/detail-recipe";
+import AddRecipe from "./pages/add-recipe";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
   {
     path: "/detail-recipe/:title",
     element: <DetailRecipe />,
+  },
+  {
+    path: "/add-recipe",
+    element: <AddRecipe />,
   },
 ]);
 

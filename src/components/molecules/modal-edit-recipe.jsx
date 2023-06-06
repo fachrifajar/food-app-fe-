@@ -219,6 +219,7 @@ const ModalEditRecipe = ({ open, onClose, onSuccess, getRecipeData }) => {
           />
           <TextFieldTemplate
             label="Title"
+            variant="filled"
             placeholder={getRecipeData?.title}
             onChange={(e) => {
               if (e.target.value.length < 5) {
@@ -235,7 +236,9 @@ const ModalEditRecipe = ({ open, onClose, onSuccess, getRecipeData }) => {
               },
             }}
             error={isErrTitle}
-            helperText={isErrTitle ? "Title cannot be less than 5" : null}
+            helperText={
+              isErrTitle ? "Title cannot be less than 5 characters" : null
+            }
             sx={{ display: "flex", width: "100%" }}
           />
 
@@ -253,6 +256,9 @@ const ModalEditRecipe = ({ open, onClose, onSuccess, getRecipeData }) => {
                   } else {
                     setIsErrIngredients(true);
                     setIngredients("");
+                    setErrMsgIngredients(
+                      "Ingredients cannot less than 10 characters"
+                    );
                   }
                 } else {
                   const lines = e.target.value.split("\n");
@@ -314,6 +320,7 @@ const ModalEditRecipe = ({ open, onClose, onSuccess, getRecipeData }) => {
               <Button
                 variant="contained"
                 component="span"
+                color="secondary"
                 sx={{ marginBottom: "3%" }}>
                 Change Image
               </Button>

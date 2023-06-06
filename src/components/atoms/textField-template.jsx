@@ -15,7 +15,8 @@ const TextFieldTemplate = ({
   size,
   onKeyDown,
   onInput,
-  name
+  name,
+  variant,
 }) => {
   const isXs = useMediaQuery("(max-width: 600px)");
   return (
@@ -28,7 +29,7 @@ const TextFieldTemplate = ({
         size={isXs ? "medium" : "small"}
         id="outlined-basic"
         margin="normal"
-        variant="outlined"
+        variant={variant ? variant : "outlined"}
         disabled={disabled}
         label={label}
         error={error}

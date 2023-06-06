@@ -28,7 +28,27 @@ const MultilineTemplate = ({
         ...InputProps,
       }}
       onChange={onChange}
-      sx={{ width: isXs ? "100%" : "50%", ...sx }}
+      sx={{
+        width: isXs ? "100%" : "50%",
+        "& label": {
+          color: "#46505c",
+        },
+        "& label.Mui-focused": {
+          color: "text.secondary",
+        },
+        "& .MuiOutlinedInput-root": {
+          "& fieldset": {
+            borderColor: "#8692a6",
+          },
+          "&:hover fieldset": {
+            borderColor: "secondary",
+          },
+          "&.Mui-focused fieldset": {
+            borderColor: "secondary",
+          },
+        },
+        ...sx,
+      }}
     />
   );
 };

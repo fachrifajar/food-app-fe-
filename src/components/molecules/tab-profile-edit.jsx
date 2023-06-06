@@ -13,7 +13,7 @@ import ModalSuccessTemplate from "./modal-success-template";
 const TabProfileEdit = ({ onSuccess }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const [getUserData, setGetUserData] = React.useState(
     useSelector((state) => state.auth?.profile?.data)
   );
@@ -177,6 +177,7 @@ const TabProfileEdit = ({ onSuccess }) => {
           <Button
             variant="contained"
             component="span"
+            color="secondary"
             sx={{ marginBottom: "3%" }}>
             Change Image
           </Button>

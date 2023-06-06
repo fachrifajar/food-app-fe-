@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   Avatar,
   useMediaQuery,
@@ -18,6 +19,7 @@ import TabProfileCard from "../components/molecules/tab-profile-card";
 
 const Profile = () => {
   document.title = "Profile";
+  const navigate = useNavigate();
 
   const isXs = useMediaQuery("(max-width: 900px)");
   const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
@@ -38,10 +40,19 @@ const Profile = () => {
     setName(e.username);
   };
 
+  React.useEffect(() => {
+    if (!authData) {
+      navigate("/");
+    }
+  }, []);
+
   return (
     <>
       <Navbar _setTheme={mode} getTheme={(e) => setMode(e)} />
-      <Boxs _setTheme={mode} _sx={{ height: "150vh" }}>
+      <Boxs
+        _setTheme={mode}
+        // _sx={{ height: "150vh" }}
+      >
         <Typography component="div" align="center" sx={{ marginTop: "10%" }}>
           {authData?.profilePicture?.includes("http") ? (
             <Avatar

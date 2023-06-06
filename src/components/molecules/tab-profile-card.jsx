@@ -239,7 +239,8 @@ const TabProfileCard = () => {
               spacing={2}
               direction="row"
               justifyContent="center"
-              alignItems="center">
+              alignItems="center"
+              sx={{ marginBottom: "5%" }}>
               {myLoveRecipes?.map((item, key) => {
                 return (
                   <React.Fragment key={key}>
