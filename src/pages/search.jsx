@@ -14,7 +14,9 @@ const Search = () => {
   const navigate = useNavigate();
 
   const getData = useSelector((state) => state?.recipe?.searchRecipeData?.data);
-  const [mode, setMode] = React.useState(localStorage.getItem("selectedTheme"));
+  const [mode, setMode] = React.useState(
+    localStorage.getItem("selectedTheme") || "dark"
+  );
   const [getRecipeData, setGetRecipeData] = React.useState(getData);
 
   return (

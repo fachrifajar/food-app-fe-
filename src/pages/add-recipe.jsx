@@ -25,7 +25,9 @@ const AddRecipe = () => {
   const isXs = useMediaQuery("(max-width: 600px)");
   const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
 
-  const [mode, setMode] = React.useState(localStorage.getItem("selectedTheme"));
+  const [mode, setMode] = React.useState(
+    localStorage.getItem("selectedTheme") || "dark"
+  );
   const [authData, setAuthData] = React.useState(
     useSelector((state) => state.auth?.profile?.data)
   );

@@ -37,7 +37,9 @@ const Register = () => {
 
   const [state, dispatch] = React.useReducer(formReducer, INITIAL_STATE);
 
-  const [mode, setMode] = React.useState(localStorage.getItem("selectedTheme"));
+  const [mode, setMode] = React.useState(
+    localStorage.getItem("selectedTheme") || "dark"
+  );
   const [authData, setAuthData] = React.useState(
     useSelector((state) => state.auth?.profile?.data)
   );

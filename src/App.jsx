@@ -33,7 +33,9 @@ function App() {
   const isXs = useMediaQuery("(max-width: 600px)");
   const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
 
-  const [mode, setMode] = React.useState(localStorage.getItem("selectedTheme"));
+  const [mode, setMode] = React.useState(
+    localStorage.getItem("selectedTheme") || "dark"
+  );
   const [inputValue, setInputValue] = React.useState("");
   const [suggestions, setSuggestions] = React.useState([]);
 

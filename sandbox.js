@@ -536,5 +536,3 @@
 
 // export default Api;
 
-let x = 'apple  ee'
-console.log(x.trim())
