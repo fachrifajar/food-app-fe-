@@ -257,7 +257,7 @@ function Navbar({ _setTheme, getTheme }) {
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-              {pages.map((page) => {
+              {pages?.map((page) => {
                 let isActive = false;
 
                 if (page === "Home" && location.pathname === "/") {
