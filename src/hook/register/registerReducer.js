@@ -114,6 +114,11 @@ export const formReducer = (state, action) => {
         ...state,
         isErrModalOpen: false,
       };
+    case "FORCE_STOP":
+      return {
+        ...state,
+        isLoading: false,
+      };
     default:
       return state;
   }

@@ -55,13 +55,17 @@ const Profile = () => {
       >
         <Typography component="div" align="center" sx={{ marginTop: "10%" }}>
           {authData?.profilePicture?.includes("http") ? (
-            <Avatar
-              sx={{
-                height: { md: "120px", sm: "120px", xs: "100px" },
-                width: { md: "120px", sm: "120px", xs: "100px" },
-              }}>
-              {authData?.username[0]}
-            </Avatar>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <Avatar
+                sx={{
+                  height: isXs ? "100px" : isSm ? "120px" : "120px",
+                  width: isXs ? "100px" : isSm ? "120px" : "120px",
+                  marginBottom: "1%",
+                  fontSize: { md: "50px", sm: "50px", xs: "40px" },
+                }}>
+                {authData?.username[0]}
+              </Avatar>
+            </div>
           ) : (
             <>
               <img

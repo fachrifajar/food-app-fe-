@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import * as recipeReducer from "../../store/reducer/recipe";
+import * as authReducer from "../../store/reducer/auth";
 
 import { Tab, Tabs, Typography, Grid } from "@mui/material";
 import ModeIcon from "@mui/icons-material/Mode";
@@ -13,6 +14,9 @@ import CardTemplate from "./card-template";
 import SortButton from "./sort-button";
 import PaginationTemplate from "./pagination-template";
 import ModalEditRecipe from "./modal-edit-recipe";
+import ModalDelete from "./modal-delete";
+import ModalErrorTemplate from "./modal-error-template";
+import ButtonTemplate from "../atoms/button-template";
 
 const TabProfileCard = () => {
   const navigate = useNavigate();
@@ -24,12 +28,15 @@ const TabProfileCard = () => {
   );
   const [myRecipes, setMyRecipes] = React.useState([]);
   const [myLoveRecipes, setMyLoveRecipes] = React.useState([]);
-  const [totalPages, setTotalPages] = React.useState([]);
+  const [totalPages, setTotalPages] = React.useState(1);
   const [currentPages, setCurrentPages] = React.useState(1);
   const [getSortType, setGetSortType] = React.useState("createdDesc");
 
   const [isModalEditOpen, setIsModalEditOpen] = React.useState(false);
   const [getClickedData, setGetClickedData] = React.useState([]);
+
+  const [isModalDeleteOpen, setIsModalDeleteOpen] = React.useState(false);
+  const [isModalExp, setIsModalExp] = React.useState(false);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -44,7 +51,7 @@ const TabProfileCard = () => {
       );
 
       setMyRecipes(getRecipes?.data?.data);
-      setTotalPages(Math.ceil(getRecipes?.data?.total / 6));
+      setTotalPages(Math.ceil(getRecipes?.data?.total / 3));
 
       const refreshTokenResponse = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/auth/token`,
@@ -53,7 +60,7 @@ const TabProfileCard = () => {
         }
       );
       const newAccessToken = refreshTokenResponse?.data?.accessToken;
-
+      console.log({ refreshTokenResponse });
       const myLoveRecipes = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/users/recipes/love-recipe`,
         {
@@ -62,9 +69,14 @@ const TabProfileCard = () => {
           },
         }
       );
+      console.log(myLoveRecipes);
       setMyLoveRecipes(myLoveRecipes?.data?.data);
     } catch (error) {
       console.log(error, "ERRORfetchContent");
+      console.log(error?.response?.data?.message);
+      if (error?.response?.data?.message === "Refresh token not provided") {
+        handleExpModal();
+      }
     }
   };
 
@@ -76,6 +88,10 @@ const TabProfileCard = () => {
     );
 
     navigate(`/detail-recipe/${item?.slug}`);
+  };
+
+  const handleExpModal = () => {
+    setIsModalExp(true);
   };
 
   React.useEffect(() => {
@@ -183,6 +199,10 @@ const TabProfileCard = () => {
                               }}
                             />
                             <DeleteIcon
+                              onClick={() => {
+                                setGetClickedData(item);
+                                setIsModalDeleteOpen(true);
+                              }}
                               sx={{
                                 cursor: "pointer",
                                 "&:hover": {
@@ -224,8 +244,18 @@ const TabProfileCard = () => {
                 onSuccess={(e) => {
                   if (e) {
                     fetchContent();
-
-                    // setIsModalEditOpen(false);
+                  }
+                }}
+              />
+              <ModalDelete
+                title={"Are you sure you want to delete this Recipe?"}
+                open={isModalDeleteOpen}
+                onClose={() => setIsModalDeleteOpen(false)}
+                _getDeleteId={getClickedData?.recipes_id}
+                urlParams="recipes"
+                onSuccess={(e) => {
+                  if (e) {
+                    fetchContent();
                   }
                 }}
               />
@@ -261,6 +291,18 @@ const TabProfileCard = () => {
             </Grid>
           </>
         )}
+        <ModalErrorTemplate
+          open={isModalExp}
+          text="Your session has expired. please Login"
+          onClose={() => setIsModalExp(false)}>
+          <ButtonTemplate
+            text="Login"
+            onClick={() => {
+              dispatch(authReducer.deleteAuthData());
+              navigate("/login");
+            }}
+          />
+        </ModalErrorTemplate>
       </Typography>
     </>
   );

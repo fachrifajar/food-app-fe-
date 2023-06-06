@@ -1,14 +1,5 @@
 import React from "react";
-import {
-  Modal,
-  Card,
-  Typography,
-  styled,
-  Tabs,
-  Tab,
-  Box,
-  Button,
-} from "@mui/material";
+import { Modal, Card, Typography, styled, Box, Button } from "@mui/material";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";

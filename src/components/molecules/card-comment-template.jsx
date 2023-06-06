@@ -18,6 +18,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 // import components
 import ModalEditComment from "./modal-edit-comment";
 import ModalDelete from "./modal-delete";
+import ModalSuccessTemplate from "./modal-success-template";
+import ButtonTemplate from "../atoms/button-template";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -41,6 +43,9 @@ export default function CardCommentTemplate({
   const [isModalEditOpen, setIsModalEditOpen] = React.useState(false);
   const [getCommentsId, setGetCommentsId] = React.useState("");
   const [isModalDeleteOpen, setIsModalDeleteOpen] = React.useState(false);
+
+  const [modalSuccess, setModalSuccess] = React.useState(false);
+  const [getRecipeName, setGetRecipeName] = React.useState("");
 
   const handleSuccessModal = () => {
     setIsModalEditOpen(true);
@@ -169,6 +174,7 @@ export default function CardCommentTemplate({
                         color="custom.default"
                         onClick={() => {
                           handleSuccessModalDelete();
+                          setGetRecipeName(item?.title);
                         }}
                         sx={{ cursor: "pointer" }}>
                         <DeleteIcon />
@@ -190,9 +196,21 @@ export default function CardCommentTemplate({
         title={"Are you sure you want to delete this comment?"}
         open={isModalDeleteOpen}
         onClose={() => setIsModalDeleteOpen(false)}
-        _getCommentsId={getCommentsId}
+        _getDeleteId={getCommentsId}
         onSuccess={(e) => _onSuccessDelete(e)}
+        urlParams="comments"
       />
+      <ModalSuccessTemplate
+        open={modalSuccess}
+        // onClose={() => setModalSuccess(false)}
+        text={`Success delete Recipe: ${getRecipeName}`}>
+        <ButtonTemplate
+          text="Click here to continue"
+          onClick={() => {
+            setModalSuccess(false);
+            onClose(true);
+          }}></ButtonTemplate>
+      </ModalSuccessTemplate>
     </Box>
   );
 }

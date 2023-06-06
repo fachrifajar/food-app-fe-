@@ -309,7 +309,9 @@ const DetailRecipe = () => {
                 cursor: "pointer",
                 marginLeft: "auto",
               }}
-              onClick={handleFavoriteClick}
+              onClick={() => {
+                handleFavoriteClick();
+              }}
             />
             <Typography
               component="span"
@@ -409,25 +411,39 @@ const DetailRecipe = () => {
             fontSize: { xs: "30px", sm: "35px", md: "35px" },
             marginTop: { md: "10vh", sm: "10vh", xs: "5vh" },
             marginBottom: { md: "5vh", sm: "5vh", xs: "5vh" },
-          }}></Typography>
-        <CardCommentTemplate
-          result={getComments}
-          getId={getUserData?.accounts_id}
-          _onSuccess={(e) => {
-            if (e === true) {
-              fetchComment();
-              setSuccessMsg("Comment successfully edited");
-              handleSuccessModal();
-            }
-          }}
-          _onSuccessDelete={(e) => {
-            if (e === true) {
-              fetchComment();
-              setSuccessMsg("Comment successfully deleted");
-              handleSuccessModal();
-            }
           }}
         />
+        {getComments?.length ? (
+          <CardCommentTemplate
+            result={getComments}
+            getId={getUserData?.accounts_id}
+            _onSuccess={(e) => {
+              if (e === true) {
+                fetchComment();
+                setSuccessMsg("Comment successfully edited");
+                handleSuccessModal();
+              }
+            }}
+            _onSuccessDelete={(e) => {
+              if (e === true) {
+                fetchComment();
+                setSuccessMsg("Comment successfully deleted");
+                handleSuccessModal();
+              }
+            }}
+          />
+        ) : (
+          <Typography
+            component="div"
+            align="center"
+            sx={{
+              fontSize: { xs: "20px", sm: "25px", md: "25px" },
+              marginBottom: "10%",
+            }}>
+            No Comments Available
+          </Typography>
+        )}
+
         <ModalErrorTemplate
           open={isModalErrOpen}
           text="Please Login first before accessing this page"

@@ -38,9 +38,10 @@ const ModalDelete = ({
   open,
   onClose,
   children,
-  _getCommentsId,
+  _getDeleteId,
   onSuccess,
   title,
+  urlParams,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -52,13 +53,14 @@ const ModalDelete = ({
   const [isLoading, setIsLoading] = React.useState(false);
 
   const handleEdit = async () => {
+    console.log({_getDeleteId})
     try {
       setIsLoading(true);
 
       const response = await axios.delete(
         `${
           import.meta.env.VITE_BASE_URL
-        }/users/recipes/delete/comments/${_getCommentsId}`,
+        }/users/recipes/delete/${urlParams}/${_getDeleteId}`,
         {
           headers: {
             Authorization: `Bearer ${authData}`,
@@ -93,7 +95,7 @@ const ModalDelete = ({
       const response = await axios.delete(
         `${
           import.meta.env.VITE_BASE_URL
-        }/users/recipes/delete/comments/${_getCommentsId}`,
+        }/users/recipes/delete/${urlParams}/${_getDeleteId}`,
         {
           headers: {
             Authorization: `Bearer ${newAccessToken}`,

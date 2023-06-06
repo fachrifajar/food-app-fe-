@@ -126,7 +126,8 @@ function Navbar({ _setTheme, getTheme }) {
               variant="h6"
               noWrap
               component="a"
-              href="/"
+              // href="/"
+              onClick={() => window.location.reload()}
               sx={{
                 mr: 2,
                 display: { xs: "none", md: "flex" },

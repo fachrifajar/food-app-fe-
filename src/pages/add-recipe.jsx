@@ -219,7 +219,9 @@ const AddRecipe = () => {
       dispatch({ type: "FETCH_SUCCESS" });
     } catch (error) {
       console.error("errorhandleSubmit", error);
-      if (error?.response?.status === 403) {
+      if (error?.code == "ERR_NETWORK") {
+        dispatch({ type: "FORCE_STOP" });
+      } else if (error?.response?.status === 403) {
         dispatch({
           type: "FETCH_ERROR",
           payload: { errMsg: error?.response?.data?.message },
@@ -234,6 +236,10 @@ const AddRecipe = () => {
   };
 
   React.useEffect(() => {
+    if (!authData) {
+      navigate("/login");
+    }
+
     if (state.title.value && state.ingredients.value && state.photo.value) {
       dispatch({ type: "HANDLE_UNDISABLED" });
     } else {
