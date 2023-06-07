@@ -69,7 +69,7 @@ const ModalDelete = ({
             },
           }
         );
-        console.log(response);
+        // console.log(response);
         onSuccess(true);
 
         setIsLoading(false);
@@ -97,17 +97,17 @@ const ModalDelete = ({
             }
           );
 
-          console.log(response);
+          // console.log(response);
           setIsLoading(false);
           onSuccess(true);
           onClose();
         } else {
-          console.log("ERRORhandleDelete", error);
+          // console.log("ERRORhandleDelete", error);
           setIsLoading(false);
         }
       }
     } catch (error) {
-      console.log("ERRORhandleDelete", error);
+      // console.log("ERRORhandleDelete", error);
       setIsLoading(false);
 
       if (error?.response?.data?.message === "Invalid refresh token") {
@@ -184,67 +184,3 @@ const ModalDelete = ({
 };
 
 export default ModalDelete;
-// const handleEdit = async () => {
-//   try {
-//     setIsLoading(true);
-
-//     const response = await axios.delete(
-//       `${
-//         import.meta.env.VITE_BASE_URL
-//       }/users/recipes/delete/${urlParams}/${_getDeleteId}`,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${authData}`,
-//         },
-//       }
-//     );
-//     console.log(response);
-//     onSuccess(true);
-
-//     setIsLoading(false);
-//     onClose();
-//   } catch (error) {
-//     if (error?.response?.status === 401) {
-//       handleRefreshToken();
-//     } else {
-//       console.log("ERRORhandleDelete", error);
-//       setIsLoading(false);
-//     }
-//   }
-// };
-
-// const handleRefreshToken = async () => {
-//   try {
-//     const refreshTokenResponse = await axios.get(
-//       `${import.meta.env.VITE_BASE_URL}/auth/token`,
-//       {
-//         withCredentials: true, // Include HTTTP ONLY cookies in the request
-//       }
-//     );
-//     const newAccessToken = refreshTokenResponse?.data?.accessToken;
-
-//     const response = await axios.delete(
-//       `${
-//         import.meta.env.VITE_BASE_URL
-//       }/users/recipes/delete/${urlParams}/${_getDeleteId}`,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${newAccessToken}`,
-//         },
-//       }
-//     );
-
-//     console.log(response);
-//     setIsLoading(false);
-//     onSuccess(true);
-//     onClose();
-//   } catch (error) {
-//     console.log("ERRORgetRefreshToken", error);
-//     setIsLoading(false);
-
-//     if (error?.response?.data?.message === "Invalid refresh token") {
-//       onClose();
-//       handleExpModal();
-//     }
-//   }
-// };

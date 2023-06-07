@@ -57,7 +57,7 @@ function App() {
         setSuggestions(getRecipes?.data?.data);
       }
     } catch (error) {
-      console.log("errorFetchSuggestions", error);
+      // console.log("errorFetchSuggestions", error);
     }
   };
 
@@ -94,7 +94,7 @@ function App() {
       setPoprecipes(getRecipes?.data?.data);
       setTotalPages(Math.ceil(getRecipes?.data?.total / 6));
     } catch (error) {
-      console.log(error, "ERRORfetchContent");
+      // console.log(error, "ERRORfetchContent");
     }
   };
 

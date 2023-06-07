@@ -15,7 +15,7 @@ export default function PaginationTemplate({
 
   const handlePageChange = async (event, page) => {
     setCurrentPages(page);
-    console.log("sortTypeee", sortType);
+    // console.log("sortTypeee", sortType);
     try {
       if (currentPages !== page) {
         pages(page);
@@ -28,7 +28,7 @@ export default function PaginationTemplate({
         fetchedData(getRecipes?.data?.data);
       }
     } catch (error) {
-      console.log("errorPagination", error);
+      // console.log("errorPagination", error);
     }
   };
 

@@ -124,7 +124,7 @@ const Login = () => {
           withCredentials: true,
         }
       );
-      console.log(response);
+      // console.log(response);
       // setAuthProfile
       dispatch(
         authReducer.setAuthProfile({
@@ -137,7 +137,7 @@ const Login = () => {
       handleSuccessModal();
       setIsModalErrOpen(false);
     } catch (error) {
-      console.log("handleLoginUserERROR", error);
+      // console.log("handleLoginUserERROR", error);
       setIsLoading(false);
       handleErrModal();
 

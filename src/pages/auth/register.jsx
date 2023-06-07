@@ -256,11 +256,11 @@ const Register = () => {
           password: state.pwd.value.value,
         }
       );
-      console.log(response);
+      // console.log(response);
 
       dispatch({ type: "FETCH_SUCCESS" });
     } catch (error) {
-      console.log("handleRegisterUserERROR", error);
+      // console.log("handleRegisterUserERROR", error);
       
       dispatch({
         type: "FETCH_ERROR",

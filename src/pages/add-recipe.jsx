@@ -209,7 +209,7 @@ const AddRecipe = () => {
             },
           }
         );
-        console.log(response);
+        // console.log(response);
 
         dispatch({ type: "FETCH_SUCCESS" });
       } catch (error) {
@@ -248,7 +248,7 @@ const AddRecipe = () => {
               },
             }
           );
-          console.log(response);
+          // console.log(response);
 
           dispatch({ type: "FETCH_SUCCESS" });
         } else {

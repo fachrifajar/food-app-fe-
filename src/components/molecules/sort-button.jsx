@@ -22,7 +22,7 @@ const SortButton = ({ getSortType, getSortData, urlParams }) => {
 
         getSortData(getRecipes?.data?.data);
       } catch (error) {
-        console.log("errorPagination", error);
+        // console.log("errorPagination", error);
       }
     }
   };

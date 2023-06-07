@@ -83,8 +83,8 @@ const ModalEditRecipe = ({ open, onClose, onSuccess, getRecipeData }) => {
 
       try {
         if (title || selectedImage || ingredients) {
-          console.log(title);
-          console.log(ingredients);
+          // console.log(title);
+          // console.log(ingredients);
 
           const response = await axios.patch(
             `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/${
@@ -102,15 +102,15 @@ const ModalEditRecipe = ({ open, onClose, onSuccess, getRecipeData }) => {
               },
             }
           );
-          console.log(response);
+          // console.log(response);
 
           const validateTitle = response?.data?.data?.title;
           const validateIngredients = response?.data?.data?.ingredients;
           const validatePhoto = response?.data?.data?.photo;
 
-          console.log(validateTitle);
-          console.log(validateIngredients);
-          console.log(validatePhoto);
+          // console.log(validateTitle);
+          // console.log(validateIngredients);
+          // console.log(validatePhoto);
 
           if (validateTitle && validateIngredients && validatePhoto) {
             setSuccessMsg("Title, Ingredients & Photo, successfully updated");
@@ -148,8 +148,8 @@ const ModalEditRecipe = ({ open, onClose, onSuccess, getRecipeData }) => {
           const newAccessToken = refreshTokenResponse?.data?.accessToken;
 
           if (title || selectedImage || ingredients) {
-            console.log(title);
-            console.log(ingredients);
+            // console.log(title);
+            // console.log(ingredients);
 
             const response = await axios.patch(
               `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/${
@@ -167,15 +167,15 @@ const ModalEditRecipe = ({ open, onClose, onSuccess, getRecipeData }) => {
                 },
               }
             );
-            console.log(response);
+            // console.log(response);
 
             const validateTitle = response?.data?.data?.title;
             const validateIngredients = response?.data?.data?.ingredients;
             const validatePhoto = response?.data?.data?.photo;
 
-            console.log(validateTitle);
-            console.log(validateIngredients);
-            console.log(validatePhoto);
+            // console.log(validateTitle);
+            // console.log(validateIngredients);
+            // console.log(validatePhoto);
 
             if (validateTitle && validateIngredients && validatePhoto) {
               setSuccessMsg("Title, Ingredients & Photo, successfully updated");
@@ -461,83 +461,3 @@ const ModalEditRecipe = ({ open, onClose, onSuccess, getRecipeData }) => {
 };
 
 export default ModalEditRecipe;
-
-// const handleSubmit = async () => {
-//   try {
-//     setIsLoading(true);
-
-//     const refreshTokenResponse = await axios.get(
-//       `${import.meta.env.VITE_BASE_URL}/auth/token`,
-//       {
-//         withCredentials: true, // Include HTTTP ONLY cookies in the request
-//       }
-//     );
-//     const newAccessToken = refreshTokenResponse?.data?.accessToken;
-
-//     if (title || selectedImage || ingredients) {
-//       console.log(title);
-//       console.log(ingredients);
-
-//       const response = await axios.patch(
-//         `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/${
-//           getRecipeData?.recipes_id
-//         }`,
-//         {
-//           title: title == "" ? null : title,
-//           ingredients: ingredients == "" ? null : ingredients,
-//           photo: selectedImage,
-//         },
-//         {
-//           headers: {
-//             "Content-Type": "multipart/form-data",
-//             Authorization: `Bearer ${newAccessToken}`,
-//           },
-//         }
-//       );
-//       console.log(response);
-
-//       const validateTitle = response?.data?.data?.title;
-//       const validateIngredients = response?.data?.data?.ingredients;
-//       const validatePhoto = response?.data?.data?.photo;
-
-//       console.log(validateTitle);
-//       console.log(validateIngredients);
-//       console.log(validatePhoto);
-
-//       if (validateTitle && validateIngredients && validatePhoto) {
-//         setSuccessMsg("Title, Ingredients & Photo, successfully updated");
-//       } else if (validateTitle && validateIngredients) {
-//         setSuccessMsg("Title & Ingredients, successfully updated");
-//       } else if (validateTitle && validatePhoto) {
-//         setSuccessMsg("Title & Photo, successfully updated");
-//       } else if (validateIngredients && validatePhoto) {
-//         setSuccessMsg("Ingredients & Photo, successfully updated");
-//       } else if (validateTitle) {
-//         setSuccessMsg("Title, successfully updated");
-//       } else if (validateIngredients) {
-//         setSuccessMsg("Ingredients, successfully updated");
-//       } else if (validatePhoto) {
-//         setSuccessMsg("Photo, successfully updated");
-//       }
-
-//       setIsLoading(false);
-//       setModalSuccess(true);
-
-//       setTitle("");
-//       setIngredients("");
-//       setSelectedImage(null);
-
-//       onSuccess(true);
-//     }
-//   } catch (error) {
-//     console.error("errorhandleSubmit", error);
-//     setIsLoading(false);
-
-//     if (error?.response?.data?.message === "Invalid refresh token") {
-//       setIsModalExp(true);
-//     } else {
-//       setModalErr(true);
-//       setErrMsg(error?.response?.data?.message?.message);
-//     }
-//   }
-// };
