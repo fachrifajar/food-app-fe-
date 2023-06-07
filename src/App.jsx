@@ -183,7 +183,7 @@ function App() {
           </Grid>
           {!isXs && (
             <Grid
-              className="topContent-right-contents"
+              className="topContent-right-content"
               item
               md={3.5}
               sm={3.5}
