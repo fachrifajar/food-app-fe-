@@ -55,9 +55,9 @@ npm install
 | -------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | ![Login](/public/screencapture-login.png "Login Page") | ![Register](/public/screencapture-register.png "Register Page") |
 
-| Add Recipe Page                                                           | 
+<!-- | Add Recipe Page                                                           | 
 | -------------------------------------------------------------------- |
-| ![Add Recipe Page](/public/screencapture-addrecipe.png "Login Page") |
+| ![Add Recipe Page](/public/screencapture-addrecipe.png "Login Page") | -->
 
 | Home Page                                                     | Search Page                                                                         |
 | ------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
