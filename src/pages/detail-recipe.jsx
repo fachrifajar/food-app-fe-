@@ -414,7 +414,7 @@ const DetailRecipe = () => {
           <MultilineTemplate
             label="Comments : "
             onChange={(e) => {
-              if (e.target.value === "") {
+              if (e?.target?.value === "") {
                 setIsError(false);
                 setGetCommentValue("");
               } else {
