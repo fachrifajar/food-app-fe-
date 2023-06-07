@@ -26,8 +26,8 @@ const AddRecipe = () => {
   const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
 
   const [mode, setMode] = React.useState(
-    localStorage.getItem("selectedTheme") || "dark"
-  );
+    localStorage.getItem("selectedTheme") || "dark"
+  );
   const [authData, setAuthData] = React.useState(
     useSelector((state) => state.auth?.profile?.data)
   );
@@ -194,31 +194,55 @@ const AddRecipe = () => {
     try {
       dispatch({ type: "FETCH_START" });
 
-      const refreshTokenResponse = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/auth/token`,
-        {
-          withCredentials: true,
-        }
-      );
-      const newAccessToken = refreshTokenResponse?.data?.accessToken;
-
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/users/recipes/add`,
-        {
-          ingredients: state?.ingredients?.value,
-          photo: state?.photo?.value,
-          title: state?.title?.value,
-        },
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${newAccessToken}`,
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_BASE_URL}/users/recipes/add`,
+          {
+            ingredients: state?.ingredients?.value,
+            photo: state?.photo?.value,
+            title: state?.title?.value,
           },
-        }
-      );
-      console.log(response);
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${authData?.accessToken}`,
+            },
+          }
+        );
+        console.log(response);
 
-      dispatch({ type: "FETCH_SUCCESS" });
+        dispatch({ type: "FETCH_SUCCESS" });
+      } catch (error) {
+        if (error?.response?.status === 401) {
+          const refreshTokenResponse = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/auth/token`,
+            {
+              withCredentials: true,
+            }
+          );
+          const newAccessToken = refreshTokenResponse?.data?.accessToken;
+
+          const response = await axios.post(
+            `${import.meta.env.VITE_BASE_URL}/users/recipes/add`,
+            {
+              ingredients: state?.ingredients?.value,
+              photo: state?.photo?.value,
+              title: state?.title?.value,
+            },
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${newAccessToken}`,
+              },
+            }
+          );
+          console.log(response);
+
+          dispatch({ type: "FETCH_SUCCESS" });
+        } else {
+          dispatch({ type: "FORCE_STOP" });
+        }
+      }
     } catch (error) {
       console.error("errorhandleSubmit", error);
       if (error?.code == "ERR_NETWORK") {

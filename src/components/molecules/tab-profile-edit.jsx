@@ -82,58 +82,111 @@ const TabProfileEdit = ({ onSuccess }) => {
     try {
       setIsLoading(true);
 
-      const refreshTokenResponse = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/auth/token`,
-        {
-          withCredentials: true, // Include HTTTP ONLY cookies in the request
-        }
-      );
-      const newAccessToken = refreshTokenResponse?.data?.accessToken;
-
-      if (name?.value || selectedImage) {
-        const response = await axios.patch(
-          `${import.meta.env.VITE_BASE_URL}/users/edit/${
-            getUserData?.accounts_id
-          }`,
-          {
-            username: name?.value == "" ? null : name?.value,
-            profile_picture: selectedImage,
-          },
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${newAccessToken}`,
+      try {
+        if (name?.value || selectedImage) {
+          const response = await axios.patch(
+            `${import.meta.env.VITE_BASE_URL}/users/edit/${
+              getUserData?.accounts_id
+            }`,
+            {
+              username: name?.value == "" ? null : name?.value,
+              profile_picture: selectedImage,
             },
-          }
-        );
-
-        const validateUsername = response?.data?.data?.username;
-        const validateProfilePicture = response?.data?.data?.profile_picture;
-
-        if (validateUsername || validateProfilePicture) {
-          setSuccessMsg(
-            `${validateUsername ? "Username" : ""}${
-              validateUsername && validateProfilePicture ? " & " : ""
-            }${
-              validateProfilePicture ? "Profile Picture" : ""
-            } successfully updated`
-          );
-          const redux = dispatch(
-            authReducer.setAuthProfile({
-              data: {
-                ...getUserData,
-                ...(validateUsername && { username: validateUsername }),
-                ...(validateProfilePicture && {
-                  profilePicture: validateProfilePicture,
-                }),
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${getUserData?.accessToken}`,
               },
-            })
+            }
           );
-          onSuccess(redux?.payload?.data);
-        }
 
-        setIsLoading(false);
-        setModalSuccess(true);
+          const validateUsername = response?.data?.data?.username;
+          const validateProfilePicture = response?.data?.data?.profile_picture;
+
+          if (validateUsername || validateProfilePicture) {
+            setSuccessMsg(
+              `${validateUsername ? "Username" : ""}${
+                validateUsername && validateProfilePicture ? " & " : ""
+              }${
+                validateProfilePicture ? "Profile Picture" : ""
+              } successfully updated`
+            );
+            const redux = dispatch(
+              authReducer.setAuthProfile({
+                data: {
+                  ...getUserData,
+                  ...(validateUsername && { username: validateUsername }),
+                  ...(validateProfilePicture && {
+                    profilePicture: validateProfilePicture,
+                  }),
+                },
+              })
+            );
+            onSuccess(redux?.payload?.data);
+          }
+
+          setIsLoading(false);
+          setModalSuccess(true);
+        }
+      } catch (error) {
+        if (error?.response?.status === 401) {
+          const refreshTokenResponse = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/auth/token`,
+            {
+              withCredentials: true, // Include HTTTP ONLY cookies in the request
+            }
+          );
+          const newAccessToken = refreshTokenResponse?.data?.accessToken;
+
+          if (name?.value || selectedImage) {
+            const response = await axios.patch(
+              `${import.meta.env.VITE_BASE_URL}/users/edit/${
+                getUserData?.accounts_id
+              }`,
+              {
+                username: name?.value == "" ? null : name?.value,
+                profile_picture: selectedImage,
+              },
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                  Authorization: `Bearer ${newAccessToken}`,
+                },
+              }
+            );
+
+            const validateUsername = response?.data?.data?.username;
+            const validateProfilePicture =
+              response?.data?.data?.profile_picture;
+
+            if (validateUsername || validateProfilePicture) {
+              setSuccessMsg(
+                `${validateUsername ? "Username" : ""}${
+                  validateUsername && validateProfilePicture ? " & " : ""
+                }${
+                  validateProfilePicture ? "Profile Picture" : ""
+                } successfully updated`
+              );
+              const redux = dispatch(
+                authReducer.setAuthProfile({
+                  data: {
+                    ...getUserData,
+                    ...(validateUsername && { username: validateUsername }),
+                    ...(validateProfilePicture && {
+                      profilePicture: validateProfilePicture,
+                    }),
+                  },
+                })
+              );
+              onSuccess(redux?.payload?.data);
+            }
+
+            setIsLoading(false);
+            setModalSuccess(true);
+          }
+        } else {
+          setIsLoading(false);
+        }
       }
     } catch (error) {
       console.error(error);
@@ -258,3 +311,73 @@ const TabProfileEdit = ({ onSuccess }) => {
 };
 
 export default TabProfileEdit;
+
+// const handleSubmit = async () => {
+//   try {
+//     setIsLoading(true);
+
+//     const refreshTokenResponse = await axios.get(
+//       `${import.meta.env.VITE_BASE_URL}/auth/token`,
+//       {
+//         withCredentials: true, // Include HTTTP ONLY cookies in the request
+//       }
+//     );
+//     const newAccessToken = refreshTokenResponse?.data?.accessToken;
+
+//     if (name?.value || selectedImage) {
+//       const response = await axios.patch(
+//         `${import.meta.env.VITE_BASE_URL}/users/edit/${
+//           getUserData?.accounts_id
+//         }`,
+//         {
+//           username: name?.value == "" ? null : name?.value,
+//           profile_picture: selectedImage,
+//         },
+//         {
+//           headers: {
+//             "Content-Type": "multipart/form-data",
+//             Authorization: `Bearer ${newAccessToken}`,
+//           },
+//         }
+//       );
+
+//       const validateUsername = response?.data?.data?.username;
+//       const validateProfilePicture = response?.data?.data?.profile_picture;
+
+//       if (validateUsername || validateProfilePicture) {
+//         setSuccessMsg(
+//           `${validateUsername ? "Username" : ""}${
+//             validateUsername && validateProfilePicture ? " & " : ""
+//           }${
+//             validateProfilePicture ? "Profile Picture" : ""
+//           } successfully updated`
+//         );
+//         const redux = dispatch(
+//           authReducer.setAuthProfile({
+//             data: {
+//               ...getUserData,
+//               ...(validateUsername && { username: validateUsername }),
+//               ...(validateProfilePicture && {
+//                 profilePicture: validateProfilePicture,
+//               }),
+//             },
+//           })
+//         );
+//         onSuccess(redux?.payload?.data);
+//       }
+
+//       setIsLoading(false);
+//       setModalSuccess(true);
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     setIsLoading(false);
+
+//     if (error?.response?.data?.message === "Invalid refresh token") {
+//       setIsModalExp(true);
+//     } else {
+//       setModalErr(true);
+//       setErrMsg(error?.response?.data?.message?.message);
+//     }
+//   }
+// };

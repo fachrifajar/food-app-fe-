@@ -57,70 +57,71 @@ const ModalEditComment = ({
   const handleEdit = async () => {
     try {
       setIsLoading(true);
-
-      const response = await axios.patch(
-        `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/comment/${_getCommentsId}`,
-        {
-          comment: getCommentValue,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${authData}`,
+  
+      let accessToken = authData;
+  
+      try {
+        const response = await axios.patch(
+          `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/comment/${_getCommentsId}`,
+          {
+            comment: getCommentValue,
           },
-        }
-      );
-
-      onSuccess(true);
-
-      setIsLoading(false);
-      onClose();
-    } catch (error) {
-      if (error?.response?.status === 401) {
-        handleRefreshToken();
-      } else {
-        console.log("ERRORhandleEdit", error);
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+  
+        onSuccess(true);
+  
         setIsLoading(false);
+        onClose();
+      } catch (error) {
+        if (error?.response?.status === 401) {
+          const refreshTokenResponse = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/auth/token`,
+            {
+              withCredentials: true, // Include HTTP-only cookies in the request
+            }
+          );
+          const newAccessToken = refreshTokenResponse?.data?.accessToken;
+          setAuthData(newAccessToken);
+  
+          accessToken = newAccessToken;
+  
+          const responseHandleEdit = await axios.patch(
+            `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/comment/${_getCommentsId}`,
+            {
+              comment: getCommentValue,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${newAccessToken}`,
+              },
+            }
+          );
+  
+          console.log(responseHandleEdit);
+          setIsLoading(false);
+          onSuccess(true);
+          onClose();
+        } else {
+          console.log("ERRORhandleEdit", error);
+          setIsLoading(false);
+        }
       }
-    }
-  };
-
-  const handleRefreshToken = async () => {
-    try {
-      const refreshTokenResponse = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/auth/token`,
-        {
-          withCredentials: true, // Include HTTTP ONLY cookies in the request
-        }
-      );
-      const newAccessToken = refreshTokenResponse?.data?.accessToken;
-      setAuthData(newAccessToken);
-
-      const responseHandleEdit = await axios.patch(
-        `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/comment/${_getCommentsId}`,
-        {
-          comment: getCommentValue,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${newAccessToken}`,
-          },
-        }
-      );
-
-      console.log(responseHandleEdit);
-      setIsLoading(false);
-      onSuccess(true);
-      onClose();
     } catch (error) {
-      console.log("ERRORgetRefreshToken", error);
+      console.log("ERRORhandleEdit", error);
       setIsLoading(false);
-
+  
       if (error?.response?.data?.message === "Invalid refresh token") {
         onClose();
         handleExpModal();
       }
     }
   };
+  
 
   const handleExpModal = () => {
     setIsModalExp(true);
@@ -219,3 +220,72 @@ const ModalEditComment = ({
 };
 
 export default ModalEditComment;
+
+
+// const handleEdit = async () => {
+//   try {
+//     setIsLoading(true);
+
+//     const response = await axios.patch(
+//       `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/comment/${_getCommentsId}`,
+//       {
+//         comment: getCommentValue,
+//       },
+//       {
+//         headers: {
+//           Authorization: `Bearer ${authData}`,
+//         },
+//       }
+//     );
+
+//     onSuccess(true);
+
+//     setIsLoading(false);
+//     onClose();
+//   } catch (error) {
+//     if (error?.response?.status === 401) {
+//       handleRefreshToken();
+//     } else {
+//       console.log("ERRORhandleEdit", error);
+//       setIsLoading(false);
+//     }
+//   }
+// };
+
+// const handleRefreshToken = async () => {
+//   try {
+//     const refreshTokenResponse = await axios.get(
+//       `${import.meta.env.VITE_BASE_URL}/auth/token`,
+//       {
+//         withCredentials: true, // Include HTTTP ONLY cookies in the request
+//       }
+//     );
+//     const newAccessToken = refreshTokenResponse?.data?.accessToken;
+//     setAuthData(newAccessToken);
+
+//     const responseHandleEdit = await axios.patch(
+//       `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/comment/${_getCommentsId}`,
+//       {
+//         comment: getCommentValue,
+//       },
+//       {
+//         headers: {
+//           Authorization: `Bearer ${newAccessToken}`,
+//         },
+//       }
+//     );
+
+//     console.log(responseHandleEdit);
+//     setIsLoading(false);
+//     onSuccess(true);
+//     onClose();
+//   } catch (error) {
+//     console.log("ERRORgetRefreshToken", error);
+//     setIsLoading(false);
+
+//     if (error?.response?.data?.message === "Invalid refresh token") {
+//       onClose();
+//       handleExpModal();
+//     }
+//   }
+// };

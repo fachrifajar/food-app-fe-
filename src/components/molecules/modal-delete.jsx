@@ -53,62 +53,61 @@ const ModalDelete = ({
   const [isLoading, setIsLoading] = React.useState(false);
 
   const handleEdit = async () => {
-    console.log({_getDeleteId})
     try {
       setIsLoading(true);
 
-      const response = await axios.delete(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/users/recipes/delete/${urlParams}/${_getDeleteId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${authData}`,
-          },
-        }
-      );
-      console.log(response);
-      onSuccess(true);
+      let accessToken = authData;
 
-      setIsLoading(false);
-      onClose();
-    } catch (error) {
-      if (error?.response?.status === 401) {
-        handleRefreshToken();
-      } else {
-        console.log("ERRORhandleDelete", error);
+      try {
+        const response = await axios.delete(
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/users/recipes/delete/${urlParams}/${_getDeleteId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        console.log(response);
+        onSuccess(true);
+
         setIsLoading(false);
+        onClose();
+      } catch (error) {
+        if (error?.response?.status === 401) {
+          const refreshTokenResponse = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/auth/token`,
+            {
+              withCredentials: true, // Include HTTP-only cookies in the request
+            }
+          );
+          const newAccessToken = refreshTokenResponse?.data?.accessToken;
+
+          accessToken = newAccessToken;
+
+          const response = await axios.delete(
+            `${
+              import.meta.env.VITE_BASE_URL
+            }/users/recipes/delete/${urlParams}/${_getDeleteId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${newAccessToken}`,
+              },
+            }
+          );
+
+          console.log(response);
+          setIsLoading(false);
+          onSuccess(true);
+          onClose();
+        } else {
+          console.log("ERRORhandleDelete", error);
+          setIsLoading(false);
+        }
       }
-    }
-  };
-
-  const handleRefreshToken = async () => {
-    try {
-      const refreshTokenResponse = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/auth/token`,
-        {
-          withCredentials: true, // Include HTTTP ONLY cookies in the request
-        }
-      );
-      const newAccessToken = refreshTokenResponse?.data?.accessToken;
-
-      const response = await axios.delete(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/users/recipes/delete/${urlParams}/${_getDeleteId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${newAccessToken}`,
-          },
-        }
-      );
-
-      console.log(response);
-      setIsLoading(false);
-      onSuccess(true);
-      onClose();
     } catch (error) {
-      console.log("ERRORgetRefreshToken", error);
+      console.log("ERRORhandleDelete", error);
       setIsLoading(false);
 
       if (error?.response?.data?.message === "Invalid refresh token") {
@@ -185,3 +184,67 @@ const ModalDelete = ({
 };
 
 export default ModalDelete;
+// const handleEdit = async () => {
+//   try {
+//     setIsLoading(true);
+
+//     const response = await axios.delete(
+//       `${
+//         import.meta.env.VITE_BASE_URL
+//       }/users/recipes/delete/${urlParams}/${_getDeleteId}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${authData}`,
+//         },
+//       }
+//     );
+//     console.log(response);
+//     onSuccess(true);
+
+//     setIsLoading(false);
+//     onClose();
+//   } catch (error) {
+//     if (error?.response?.status === 401) {
+//       handleRefreshToken();
+//     } else {
+//       console.log("ERRORhandleDelete", error);
+//       setIsLoading(false);
+//     }
+//   }
+// };
+
+// const handleRefreshToken = async () => {
+//   try {
+//     const refreshTokenResponse = await axios.get(
+//       `${import.meta.env.VITE_BASE_URL}/auth/token`,
+//       {
+//         withCredentials: true, // Include HTTTP ONLY cookies in the request
+//       }
+//     );
+//     const newAccessToken = refreshTokenResponse?.data?.accessToken;
+
+//     const response = await axios.delete(
+//       `${
+//         import.meta.env.VITE_BASE_URL
+//       }/users/recipes/delete/${urlParams}/${_getDeleteId}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${newAccessToken}`,
+//         },
+//       }
+//     );
+
+//     console.log(response);
+//     setIsLoading(false);
+//     onSuccess(true);
+//     onClose();
+//   } catch (error) {
+//     console.log("ERRORgetRefreshToken", error);
+//     setIsLoading(false);
+
+//     if (error?.response?.data?.message === "Invalid refresh token") {
+//       onClose();
+//       handleExpModal();
+//     }
+//   }
+// };

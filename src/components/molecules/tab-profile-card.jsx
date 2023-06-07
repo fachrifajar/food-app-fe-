@@ -53,24 +53,41 @@ const TabProfileCard = () => {
       setMyRecipes(getRecipes?.data?.data);
       setTotalPages(Math.ceil(getRecipes?.data?.total / 3));
 
-      const refreshTokenResponse = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/auth/token`,
-        {
-          withCredentials: true,
+      try {
+        const myLoveRecipes = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/users/recipes/love-recipe`,
+          {
+            headers: {
+              Authorization: `Bearer ${getUserData?.accessToken}`,
+            },
+          }
+        );
+
+        setMyLoveRecipes(myLoveRecipes?.data?.data);
+      } catch (error) {
+        if (error?.response?.status === 401) {
+          const refreshTokenResponse = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/auth/token`,
+            {
+              withCredentials: true,
+            }
+          );
+          const newAccessToken = refreshTokenResponse?.data?.accessToken;
+
+          const myLoveRecipes = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/users/recipes/love-recipe`,
+            {
+              headers: {
+                Authorization: `Bearer ${newAccessToken}`,
+              },
+            }
+          );
+
+          setMyLoveRecipes(myLoveRecipes?.data?.data);
+        } else {
+          setIsLoading(false);
         }
-      );
-      const newAccessToken = refreshTokenResponse?.data?.accessToken;
-      console.log({ refreshTokenResponse });
-      const myLoveRecipes = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/users/recipes/love-recipe`,
-        {
-          headers: {
-            Authorization: `Bearer ${newAccessToken}`,
-          },
-        }
-      );
-      console.log(myLoveRecipes);
-      setMyLoveRecipes(myLoveRecipes?.data?.data);
+      }
     } catch (error) {
       console.log(error, "ERRORfetchContent");
       console.log(error?.response?.data?.message);
@@ -309,3 +326,41 @@ const TabProfileCard = () => {
 };
 
 export default TabProfileCard;
+
+// const fetchContent = async () => {
+//   try {
+//     const getRecipes = await axios.get(
+//       `${import.meta.env.VITE_BASE_URL}/users/recipes/search/myrecipe/${
+//         getUserData?.accounts_id
+//       }?page=${currentPages}&limit=3&sort=true&sortType=${getSortType}`
+//     );
+
+//     setMyRecipes(getRecipes?.data?.data);
+//     setTotalPages(Math.ceil(getRecipes?.data?.total / 3));
+
+//     const refreshTokenResponse = await axios.get(
+//       `${import.meta.env.VITE_BASE_URL}/auth/token`,
+//       {
+//         withCredentials: true,
+//       }
+//     );
+//     const newAccessToken = refreshTokenResponse?.data?.accessToken;
+//     console.log({ refreshTokenResponse });
+//     const myLoveRecipes = await axios.get(
+//       `${import.meta.env.VITE_BASE_URL}/users/recipes/love-recipe`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${newAccessToken}`,
+//         },
+//       }
+//     );
+//     console.log(myLoveRecipes);
+//     setMyLoveRecipes(myLoveRecipes?.data?.data);
+//   } catch (error) {
+//     console.log(error, "ERRORfetchContent");
+//     console.log(error?.response?.data?.message);
+//     if (error?.response?.data?.message === "Refresh token not provided") {
+//       handleExpModal();
+//     }
+//   }
+// };

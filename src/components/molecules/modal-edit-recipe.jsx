@@ -81,68 +81,130 @@ const ModalEditRecipe = ({ open, onClose, onSuccess, getRecipeData }) => {
     try {
       setIsLoading(true);
 
-      const refreshTokenResponse = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/auth/token`,
-        {
-          withCredentials: true, // Include HTTTP ONLY cookies in the request
-        }
-      );
-      const newAccessToken = refreshTokenResponse?.data?.accessToken;
+      try {
+        if (title || selectedImage || ingredients) {
+          console.log(title);
+          console.log(ingredients);
 
-      if (title || selectedImage || ingredients) {
-        console.log(title);
-        console.log(ingredients);
-
-        const response = await axios.patch(
-          `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/${
-            getRecipeData?.recipes_id
-          }`,
-          {
-            title: title == "" ? null : title,
-            ingredients: ingredients == "" ? null : ingredients,
-            photo: selectedImage,
-          },
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${newAccessToken}`,
+          const response = await axios.patch(
+            `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/${
+              getRecipeData?.recipes_id
+            }`,
+            {
+              title: title == "" ? null : title,
+              ingredients: ingredients == "" ? null : ingredients,
+              photo: selectedImage,
             },
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${authData}`,
+              },
+            }
+          );
+          console.log(response);
+
+          const validateTitle = response?.data?.data?.title;
+          const validateIngredients = response?.data?.data?.ingredients;
+          const validatePhoto = response?.data?.data?.photo;
+
+          console.log(validateTitle);
+          console.log(validateIngredients);
+          console.log(validatePhoto);
+
+          if (validateTitle && validateIngredients && validatePhoto) {
+            setSuccessMsg("Title, Ingredients & Photo, successfully updated");
+          } else if (validateTitle && validateIngredients) {
+            setSuccessMsg("Title & Ingredients, successfully updated");
+          } else if (validateTitle && validatePhoto) {
+            setSuccessMsg("Title & Photo, successfully updated");
+          } else if (validateIngredients && validatePhoto) {
+            setSuccessMsg("Ingredients & Photo, successfully updated");
+          } else if (validateTitle) {
+            setSuccessMsg("Title, successfully updated");
+          } else if (validateIngredients) {
+            setSuccessMsg("Ingredients, successfully updated");
+          } else if (validatePhoto) {
+            setSuccessMsg("Photo, successfully updated");
           }
-        );
-        console.log(response);
 
-        const validateTitle = response?.data?.data?.title;
-        const validateIngredients = response?.data?.data?.ingredients;
-        const validatePhoto = response?.data?.data?.photo;
+          setIsLoading(false);
+          setModalSuccess(true);
 
-        console.log(validateTitle);
-        console.log(validateIngredients);
-        console.log(validatePhoto);
+          setTitle("");
+          setIngredients("");
+          setSelectedImage(null);
 
-        if (validateTitle && validateIngredients && validatePhoto) {
-          setSuccessMsg("Title, Ingredients & Photo, successfully updated");
-        } else if (validateTitle && validateIngredients) {
-          setSuccessMsg("Title & Ingredients, successfully updated");
-        } else if (validateTitle && validatePhoto) {
-          setSuccessMsg("Title & Photo, successfully updated");
-        } else if (validateIngredients && validatePhoto) {
-          setSuccessMsg("Ingredients & Photo, successfully updated");
-        } else if (validateTitle) {
-          setSuccessMsg("Title, successfully updated");
-        } else if (validateIngredients) {
-          setSuccessMsg("Ingredients, successfully updated");
-        } else if (validatePhoto) {
-          setSuccessMsg("Photo, successfully updated");
+          onSuccess(true);
         }
+      } catch (error) {
+        if (error?.response?.status === 401) {
+          const refreshTokenResponse = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/auth/token`,
+            {
+              withCredentials: true, // Include HTTTP ONLY cookies in the request
+            }
+          );
+          const newAccessToken = refreshTokenResponse?.data?.accessToken;
 
-        setIsLoading(false);
-        setModalSuccess(true);
+          if (title || selectedImage || ingredients) {
+            console.log(title);
+            console.log(ingredients);
 
-        setTitle("");
-        setIngredients("");
-        setSelectedImage(null);
+            const response = await axios.patch(
+              `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/${
+                getRecipeData?.recipes_id
+              }`,
+              {
+                title: title == "" ? null : title,
+                ingredients: ingredients == "" ? null : ingredients,
+                photo: selectedImage,
+              },
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                  Authorization: `Bearer ${newAccessToken}`,
+                },
+              }
+            );
+            console.log(response);
 
-        onSuccess(true);
+            const validateTitle = response?.data?.data?.title;
+            const validateIngredients = response?.data?.data?.ingredients;
+            const validatePhoto = response?.data?.data?.photo;
+
+            console.log(validateTitle);
+            console.log(validateIngredients);
+            console.log(validatePhoto);
+
+            if (validateTitle && validateIngredients && validatePhoto) {
+              setSuccessMsg("Title, Ingredients & Photo, successfully updated");
+            } else if (validateTitle && validateIngredients) {
+              setSuccessMsg("Title & Ingredients, successfully updated");
+            } else if (validateTitle && validatePhoto) {
+              setSuccessMsg("Title & Photo, successfully updated");
+            } else if (validateIngredients && validatePhoto) {
+              setSuccessMsg("Ingredients & Photo, successfully updated");
+            } else if (validateTitle) {
+              setSuccessMsg("Title, successfully updated");
+            } else if (validateIngredients) {
+              setSuccessMsg("Ingredients, successfully updated");
+            } else if (validatePhoto) {
+              setSuccessMsg("Photo, successfully updated");
+            }
+
+            setIsLoading(false);
+            setModalSuccess(true);
+
+            setTitle("");
+            setIngredients("");
+            setSelectedImage(null);
+
+            onSuccess(true);
+          }
+        } else {
+          setIsLoading(false);
+        }
       }
     } catch (error) {
       console.error("errorhandleSubmit", error);
@@ -399,3 +461,83 @@ const ModalEditRecipe = ({ open, onClose, onSuccess, getRecipeData }) => {
 };
 
 export default ModalEditRecipe;
+
+// const handleSubmit = async () => {
+//   try {
+//     setIsLoading(true);
+
+//     const refreshTokenResponse = await axios.get(
+//       `${import.meta.env.VITE_BASE_URL}/auth/token`,
+//       {
+//         withCredentials: true, // Include HTTTP ONLY cookies in the request
+//       }
+//     );
+//     const newAccessToken = refreshTokenResponse?.data?.accessToken;
+
+//     if (title || selectedImage || ingredients) {
+//       console.log(title);
+//       console.log(ingredients);
+
+//       const response = await axios.patch(
+//         `${import.meta.env.VITE_BASE_URL}/users/recipes/edit/${
+//           getRecipeData?.recipes_id
+//         }`,
+//         {
+//           title: title == "" ? null : title,
+//           ingredients: ingredients == "" ? null : ingredients,
+//           photo: selectedImage,
+//         },
+//         {
+//           headers: {
+//             "Content-Type": "multipart/form-data",
+//             Authorization: `Bearer ${newAccessToken}`,
+//           },
+//         }
+//       );
+//       console.log(response);
+
+//       const validateTitle = response?.data?.data?.title;
+//       const validateIngredients = response?.data?.data?.ingredients;
+//       const validatePhoto = response?.data?.data?.photo;
+
+//       console.log(validateTitle);
+//       console.log(validateIngredients);
+//       console.log(validatePhoto);
+
+//       if (validateTitle && validateIngredients && validatePhoto) {
+//         setSuccessMsg("Title, Ingredients & Photo, successfully updated");
+//       } else if (validateTitle && validateIngredients) {
+//         setSuccessMsg("Title & Ingredients, successfully updated");
+//       } else if (validateTitle && validatePhoto) {
+//         setSuccessMsg("Title & Photo, successfully updated");
+//       } else if (validateIngredients && validatePhoto) {
+//         setSuccessMsg("Ingredients & Photo, successfully updated");
+//       } else if (validateTitle) {
+//         setSuccessMsg("Title, successfully updated");
+//       } else if (validateIngredients) {
+//         setSuccessMsg("Ingredients, successfully updated");
+//       } else if (validatePhoto) {
+//         setSuccessMsg("Photo, successfully updated");
+//       }
+
+//       setIsLoading(false);
+//       setModalSuccess(true);
+
+//       setTitle("");
+//       setIngredients("");
+//       setSelectedImage(null);
+
+//       onSuccess(true);
+//     }
+//   } catch (error) {
+//     console.error("errorhandleSubmit", error);
+//     setIsLoading(false);
+
+//     if (error?.response?.data?.message === "Invalid refresh token") {
+//       setIsModalExp(true);
+//     } else {
+//       setModalErr(true);
+//       setErrMsg(error?.response?.data?.message?.message);
+//     }
+//   }
+// };

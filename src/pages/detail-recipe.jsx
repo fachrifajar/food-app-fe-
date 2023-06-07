@@ -30,15 +30,15 @@ const DetailRecipe = () => {
 
   const getUserData = useSelector((state) => state.auth?.profile?.data);
 
-  console.log(getRecipeData);
-  console.log(getUserData);
+  // console.log(getRecipeData);
+  // console.log(getUserData);
 
   const isXs = useMediaQuery("(max-width: 600px)");
   const isSm = useMediaQuery("(min-width: 601px) and (max-width: 930px)");
 
   const [mode, setMode] = React.useState(
-    localStorage.getItem("selectedTheme") || "dark"
-  );
+    localStorage.getItem("selectedTheme") || "dark"
+  );
   const [isModalErrOpen, setIsModalErrOpen] = React.useState(false);
   const [isModalExp, setIsModalExp] = React.useState(false);
 
@@ -79,32 +79,65 @@ const DetailRecipe = () => {
 
   const fetchValidateLove = async (id) => {
     try {
-      const refreshTokenResponse = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/auth/token`,
-        {
-          withCredentials: true, // Include HTTTP ONLY cookies in the request
+      let accessToken = getUserData?.accessToken;
+
+      try {
+        const getValidate = await axios.get(
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/users/recipes/love-recipe/validate/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        setIsFavoriteClicked(getValidate?.data?.data);
+
+        const getCount = await axios.get(
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/users/recipes/love-recipe/count/${id}`
+        );
+
+        setGetLoveCount(getCount?.data?.data);
+      } catch (error) {
+        if (error?.response?.status === 401) {
+          const refreshTokenResponse = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/auth/token`,
+            {
+              withCredentials: true, // Include HTTP-only cookies in the request
+            }
+          );
+          const newAccessToken = refreshTokenResponse?.data?.accessToken;
+
+          accessToken = newAccessToken;
+
+          const getValidate = await axios.get(
+            `${
+              import.meta.env.VITE_BASE_URL
+            }/users/recipes/love-recipe/validate/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${newAccessToken}`,
+              },
+            }
+          );
+
+          setIsFavoriteClicked(getValidate?.data?.data);
+
+          const getCount = await axios.get(
+            `${
+              import.meta.env.VITE_BASE_URL
+            }/users/recipes/love-recipe/count/${id}`
+          );
+
+          setGetLoveCount(getCount?.data?.data);
+        } else {
+          console.log("ERR-fetchValidateLove", error);
         }
-      );
-      const newAccessToken = refreshTokenResponse?.data?.accessToken;
-
-      const getValidate = await axios.get(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/users/recipes/love-recipe/validate/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${newAccessToken}`,
-          },
-        }
-      );
-
-      setIsFavoriteClicked(getValidate?.data?.data);
-
-      const getCount = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/users/recipes/love-recipe/count/${id}`
-      );
-
-      setGetLoveCount(getCount?.data?.data);
+      }
     } catch (error) {
       console.log("ERR-fetchValidateLove", error);
 
@@ -128,27 +161,51 @@ const DetailRecipe = () => {
 
   const handleLoveRecipe = async () => {
     try {
-      const refreshTokenResponse = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/auth/token`,
-        {
-          withCredentials: true, // Include HTTTP ONLY cookies in the request
-        }
-      );
-      const newAccessToken = refreshTokenResponse?.data?.accessToken;
+      let accessToken = getUserData?.accessToken;
 
-      const response = await axios.patch(
-        `${import.meta.env.VITE_BASE_URL}/users/recipes/add/like`,
-        {
-          recipes_id: getRecipeData?.recipes_id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${newAccessToken}`,
+      try {
+        const response = await axios.patch(
+          `${import.meta.env.VITE_BASE_URL}/users/recipes/add/like`,
+          {
+            recipes_id: getRecipeData?.recipes_id,
           },
-        }
-      );
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        console.log(response);
+        fetchCountLove(getRecipeData?.recipes_id);
+      } catch (error) {
+        if (error?.response?.status === 401) {
+          const refreshTokenResponse = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/auth/token`,
+            {
+              withCredentials: true, // Include HTTP-only cookies in the request
+            }
+          );
+          const newAccessToken = refreshTokenResponse?.data?.accessToken;
 
-      fetchCountLove(getRecipeData?.recipes_id);
+          accessToken = newAccessToken;
+
+          const response = await axios.patch(
+            `${import.meta.env.VITE_BASE_URL}/users/recipes/add/like`,
+            {
+              recipes_id: getRecipeData?.recipes_id,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${newAccessToken}`,
+              },
+            }
+          );
+          console.log(response);
+          fetchCountLove(getRecipeData?.recipes_id);
+        } else {
+          console.log("ERR-handleLoveRecipe", error);
+        }
+      }
     } catch (error) {
       console.log("ERR-handleLoveRecipe", error);
 
@@ -162,71 +219,66 @@ const DetailRecipe = () => {
     try {
       setIsLoading(true);
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/users/recipes/add/comments`,
-        {
-          accounts_id: getUserData?.accounts_id,
-          recipes_id: getRecipeData?.recipes_id,
-          comment: getCommentValue,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${getUserData?.accessToken}`,
+      let accessToken = getUserData?.accessToken;
+
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_BASE_URL}/users/recipes/add/comments`,
+          {
+            accounts_id: getUserData?.accounts_id,
+            recipes_id: getRecipeData?.recipes_id,
+            comment: getCommentValue,
           },
-        }
-      );
-      console.log(response);
-      fetchComment();
-      setIsLoading(false);
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        console.log(response);
+        fetchComment();
 
-      setSuccessMsg("Comment successfully added");
-      handleSuccessModal();
-    } catch (error) {
-      if (error?.response?.status === 401) {
-        handleRefreshToken();
-      } else {
-        console.log("ERRORhandleAddComment", error);
-        setIsLoading(false);
+        setSuccessMsg("Comment successfully added");
+        handleSuccessModal();
+      } catch (error) {
+        if (error?.response?.status === 401) {
+          const refreshTokenResponse = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/auth/token`,
+            {
+              withCredentials: true, // Include HTTP-only cookies in the request
+            }
+          );
+          const newAccessToken = refreshTokenResponse?.data?.accessToken;
+
+          accessToken = newAccessToken;
+
+          const response = await axios.post(
+            `${import.meta.env.VITE_BASE_URL}/users/recipes/add/comments`,
+            {
+              accounts_id: getUserData?.accounts_id,
+              recipes_id: getRecipeData?.recipes_id,
+              comment: getCommentValue,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${newAccessToken}`,
+              },
+            }
+          );
+          console.log(response);
+          fetchComment();
+
+          setSuccessMsg("Comment successfully added");
+          handleSuccessModal();
+        } else {
+          console.log("ERRORhandleAddComment", error);
+        }
       }
-    }
-  };
 
-  const handleRefreshToken = async () => {
-    try {
-      const refreshTokenResponse = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/auth/token`,
-        {
-          withCredentials: true, // Include HTTTP ONLY cookies in the request
-        }
-      );
-      const newAccessToken = refreshTokenResponse?.data?.accessToken;
-
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/users/recipes/add/comments`,
-        {
-          accounts_id: getUserData?.accounts_id,
-          recipes_id: getRecipeData?.recipes_id,
-          comment: getCommentValue,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${newAccessToken}`,
-          },
-        }
-      );
-      console.log(response);
-      fetchComment();
       setIsLoading(false);
-
-      setSuccessMsg("Comment successfully added");
-      handleSuccessModal();
     } catch (error) {
-      console.log("ERRORgetRefreshToken", error);
+      console.log("ERRORhandleAddComment", error);
       setIsLoading(false);
-
-      if (error?.response?.data?.message === "Invalid refresh token") {
-        handleExpModal();
-      }
     }
   };
 
@@ -474,3 +526,107 @@ const DetailRecipe = () => {
 };
 
 export default DetailRecipe;
+
+// const handleLoveRecipe = async () => {
+//   try {
+//     const refreshTokenResponse = await axios.get(
+//       `${import.meta.env.VITE_BASE_URL}/auth/token`,
+//       {
+//         withCredentials: true, // Include HTTTP ONLY cookies in the request
+//       }
+//     );
+//     const newAccessToken = refreshTokenResponse?.data?.accessToken;
+
+//     const response = await axios.patch(
+//       `${import.meta.env.VITE_BASE_URL}/users/recipes/add/like`,
+//       {
+//         recipes_id: getRecipeData?.recipes_id,
+//       },
+//       {
+//         headers: {
+//           Authorization: `Bearer ${newAccessToken}`,
+//         },
+//       }
+//     );
+//     console.log("refreshTokenResponse", refreshTokenResponse);
+//     fetchCountLove(getRecipeData?.recipes_id);
+//   } catch (error) {
+//     console.log("ERR-handleLoveRecipe", error);
+
+//     if (error?.response?.data?.message === "Invalid refresh token") {
+//       handleExpModal();
+//     }
+//   }
+// };
+
+// const handleAddComment = async () => {
+//   try {
+//     setIsLoading(true);
+
+//     const response = await axios.post(
+//       `${import.meta.env.VITE_BASE_URL}/users/recipes/add/comments`,
+//       {
+//         accounts_id: getUserData?.accounts_id,
+//         recipes_id: getRecipeData?.recipes_id,
+//         comment: getCommentValue,
+//       },
+//       {
+//         headers: {
+//           Authorization: `Bearer ${getUserData?.accessToken}`,
+//         },
+//       }
+//     );
+//     console.log(response);
+//     fetchComment();
+//     setIsLoading(false);
+
+//     setSuccessMsg("Comment successfully added");
+//     handleSuccessModal();
+//   } catch (error) {
+//     if (error?.response?.status === 401) {
+//       handleRefreshToken();
+//     } else {
+//       console.log("ERRORhandleAddComment", error);
+//       setIsLoading(false);
+//     }
+//   }
+// };
+
+// const handleRefreshToken = async () => {
+//   try {
+//     const refreshTokenResponse = await axios.get(
+//       `${import.meta.env.VITE_BASE_URL}/auth/token`,
+//       {
+//         withCredentials: true, // Include HTTTP ONLY cookies in the request
+//       }
+//     );
+//     const newAccessToken = refreshTokenResponse?.data?.accessToken;
+
+//     const response = await axios.post(
+//       `${import.meta.env.VITE_BASE_URL}/users/recipes/add/comments`,
+//       {
+//         accounts_id: getUserData?.accounts_id,
+//         recipes_id: getRecipeData?.recipes_id,
+//         comment: getCommentValue,
+//       },
+//       {
+//         headers: {
+//           Authorization: `Bearer ${newAccessToken}`,
+//         },
+//       }
+//     );
+//     console.log('refreshTokenResponse',refreshTokenResponse);
+//     fetchComment();
+//     setIsLoading(false);
+
+//     setSuccessMsg("Comment successfully added");
+//     handleSuccessModal();
+//   } catch (error) {
+//     console.log("ERRORgetRefreshToken", error);
+//     setIsLoading(false);
+
+//     if (error?.response?.data?.message === "Refresh token not provided") {
+//       handleExpModal();
+//     }
+//   }
+// };
