@@ -179,20 +179,20 @@ const DetailRecipe = () => {
         fetchCountLove(getRecipeData?.recipes_id);
       } catch (error) {
         if (error?.response?.status === 401) {
-          // const refreshTokenResponse = await axios.get(
-          //   `${import.meta.env.VITE_BASE_URL}/auth/token`,
-          //   {
-          //     withCredentials: true, // Include HTTP-only cookies in the request
-          //   }
-          // );
-
-          const refreshTokenResponse = await fetch(
+          const refreshTokenResponse = await axios.get(
             `${import.meta.env.VITE_BASE_URL}/auth/token`,
             {
-              method: 'GET',
-              credentials: 'include',
+              withCredentials: true, // Include HTTP-only cookies in the request
             }
           );
+
+          // const refreshTokenResponse = await fetch(
+          //   `${import.meta.env.VITE_BASE_URL}/auth/token`,
+          //   {
+          //     method: 'GET',
+          //     credentials: 'include',
+          //   }
+          // );
 
           const newAccessToken = refreshTokenResponse?.data?.accessToken;
 
