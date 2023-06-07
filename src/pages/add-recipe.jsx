@@ -213,7 +213,19 @@ const AddRecipe = () => {
 
         dispatch({ type: "FETCH_SUCCESS" });
       } catch (error) {
-        if (error?.response?.status === 401) {
+        if (error?.code == "ERR_NETWORK") {
+          dispatch({ type: "FORCE_STOP" });
+        } else if (error?.response?.status === 403) {
+          dispatch({
+            type: "FETCH_ERROR",
+            payload: { errMsg: error?.response?.data?.message },
+          });
+        } else if (error?.response?.data?.message?.code === 413) {
+          dispatch({
+            type: "FETCH_ERROR",
+            payload: { errMsg: error?.response?.data?.message?.message },
+          });
+        } else if (error?.response?.status === 401) {
           const refreshTokenResponse = await axios.get(
             `${import.meta.env.VITE_BASE_URL}/auth/token`,
             {

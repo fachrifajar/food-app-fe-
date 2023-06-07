@@ -38,8 +38,8 @@ const Register = () => {
   const [state, dispatch] = React.useReducer(formReducer, INITIAL_STATE);
 
   const [mode, setMode] = React.useState(
-    localStorage.getItem("selectedTheme") || "dark"
-  );
+    localStorage.getItem("selectedTheme") || "dark"
+  );
   const [authData, setAuthData] = React.useState(
     useSelector((state) => state.auth?.profile?.data)
   );
@@ -261,7 +261,7 @@ const Register = () => {
       dispatch({ type: "FETCH_SUCCESS" });
     } catch (error) {
       console.log("handleRegisterUserERROR", error);
-
+      
       dispatch({
         type: "FETCH_ERROR",
         payload: { errMsg: error?.response?.data?.message?.message },

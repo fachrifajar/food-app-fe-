@@ -28,7 +28,9 @@ const DetailRecipe = () => {
     (state) => state?.recipe?.recipeData?.data?.[0]
   );
 
-  const getUserData = useSelector((state) => state.auth?.profile?.data);
+  const [getUserData, setGetUserData] = React.useState(
+    useSelector((state) => state.auth?.profile?.data)
+  );
 
   // console.log(getRecipeData);
   // console.log(getUserData);
@@ -53,6 +55,8 @@ const DetailRecipe = () => {
 
   const [isFavoriteClicked, setIsFavoriteClicked] = React.useState(false);
   const [getLoveCount, setGetLoveCount] = React.useState(getRecipeData?.love);
+
+  const [isModalAuthOpen, setIsModalAuthOpen] = React.useState(false);
 
   const handleFavoriteClick = () => {
     setIsFavoriteClicked(!isFavoriteClicked);
@@ -373,7 +377,11 @@ const DetailRecipe = () => {
                 marginLeft: "auto",
               }}
               onClick={() => {
-                handleFavoriteClick();
+                if (!getUserData) {
+                  setIsModalAuthOpen(true);
+                } else {
+                  handleFavoriteClick();
+                }
               }}
             />
             <Typography
@@ -529,6 +537,11 @@ const DetailRecipe = () => {
             }}
           />
         </ModalErrorTemplate>
+        <ModalErrorTemplate
+          open={isModalAuthOpen}
+          text="Please Login first before like this recipe"
+          onClose={() => setIsModalAuthOpen(false)}
+        />
       </Boxs>
     </>
   );
